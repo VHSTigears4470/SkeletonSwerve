@@ -31,9 +31,9 @@ public final class Constants {
     public static final double DRIVE_ENCODER_RPM_TO_METER_PER_SECOND = DRIVE_ENCODER_ROTATION_TO_METER / 60;
     public static final double TURN_ENCODER_RPM_TO_METER_PER_SECOND = TURN_ENCODER_ROTATION_TO_RADIANS / 60;
 
-    public static final double P_TURN = 0.018; // originally 0.05
+    public static final double P_TURN = 0.33; // originally 0.05
     public static final double I_TURN = 0; // originally 0
-    public static final double D_TURN = 0.2; // originally 0.05
+    public static final double D_TURN = 0; // originally 0.05
 
     public static final double P_DRIVE = 0.0000000001; // originally 0.000000005
     public static final double I_DRIVE = 0; // originally 0
@@ -87,13 +87,18 @@ public final class Constants {
     public static final boolean FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_REVERSED = false; // Check / Modify
     public static final boolean BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_REVERSED = false; // Check / Modify
 
-    public static final double BACK_LEFT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS = 114.47890625; // Check / Modify
-    public static final double FRONT_LEFT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS = 32.98046875; // Check / Modify
-    public static final double FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS = 298.6015625; // Check / Modify
-    public static final double BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS = 34.134765625; // Check / Modify
+    public static final double BACK_LEFT_DRIVE_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.314209; // Check / Modify
+    public static final double FRONT_LEFT_DRIVE_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.584961; // Check / Modify
+    public static final double FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.329834; // Check / Modify
+    public static final double BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.604980; // Check / Modify
 
-    public static final double PHYSICAL_MAX_SPEED_METER_PER_SECOND = 4; // Modify HELP
-    public static final double PHYSICAL_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND = 2 * 2 * Math.PI; // Modify HELP
+    public static final double BACK_LEFT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS = BACK_LEFT_DRIVE_ABSOLUTE_ENCODER_OFFSET_ROTATION * 2 * Math.PI; // Check / Modify
+    public static final double FRONT_LEFT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS = FRONT_LEFT_DRIVE_ABSOLUTE_ENCODER_OFFSET_ROTATION * 2 * Math.PI; // Check / Modify
+    public static final double FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS = FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_ROTATION * 2 * Math.PI; // Check / Modify
+    public static final double BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS = BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_ROTATION * 2 * Math.PI; // Check / Modify
+
+    public static final double PHYSICAL_MAX_SPEED_METER_PER_SECOND = 4; // Modify
+    public static final double PHYSICAL_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND = 2 * 2 * Math.PI; // Modify
 
     public static final double TELE_DRIVE_MAX_SPEED_METER_PER_SECOND = PHYSICAL_MAX_SPEED_METER_PER_SECOND * 0.25; // 25% power // Modify
     public static final double TELE_DRIVE_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND = PHYSICAL_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND * 0.25; // 25% power // Modify
@@ -109,7 +114,7 @@ public final class Constants {
     public static final int DRIVER_ROT_AXIS = 4; // Check
     public static final int DRIVER_FIELD_ORIENTED_BUTTON_IDX = 1; // Check
 
-    public static final double DRIVER_DEADBAND = 0.05; // Modify
+    public static final double DRIVER_DEADBAND = 0.1; // Modify
   }
 
   public static final class AutoConstants {

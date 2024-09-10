@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -15,6 +13,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
+import com.ctre.phoenix6.hardware.CANcoder;
 
 public class SwerveModule {
     // Motors
@@ -26,9 +25,11 @@ public class SwerveModule {
     // PID
     private final PIDController turnPidController;
     // Absolute Encoder with Settings
-    private final AnalogInput absoluteEncoder;
+    private final CANcoder absoluteEncoder;
     private final boolean absoluteEncoderReversed;
     private final double absoluteEncoderOffsetRad;
+
+    private final int absoluteEncoderId;
 
     /**
      * Initializes a SwerveModule for the SwerveSubsystem
@@ -43,7 +44,7 @@ public class SwerveModule {
     public SwerveModule(int driveMotorID, int turnMotorId, boolean driveMotorReversed, boolean turnMotorReversed, int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed) {
         this.absoluteEncoderReversed = absoluteEncoderReversed;
         absoluteEncoderOffsetRad = absoluteEncoderOffset;
-        absoluteEncoder = new AnalogInput(absoluteEncoderId);
+        absoluteEncoder = new CANcoder(absoluteEncoderId);
         
         driveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
         turnMotor = new CANSparkMax(turnMotorId, MotorType.kBrushless);
@@ -61,6 +62,10 @@ public class SwerveModule {
 
         turnPidController = new PIDController(ModuleConstants.P_TURN, ModuleConstants.I_TURN, ModuleConstants.D_TURN);
         turnPidController.enableContinuousInput(-Math.PI, Math.PI);
+
+        this.absoluteEncoderId = absoluteEncoderId;
+        // To Modify Values on Smartdashboard for PID, use the go to Test instead of TeleOperated
+        SmartDashboard.putData("Swerve[" + absoluteEncoderId + "] PID", turnPidController);
     }
 
     /**
@@ -100,10 +105,12 @@ public class SwerveModule {
      * @return double of the absolute encoder with offset in radians
      */
     public double getAbsoluteEncoderRad() {
-        // Gets raw value of absolute encoder
-        double angle = absoluteEncoder.getVoltage() / RobotController.getCurrent5V();
+        // Gets raw value of absolute encoder (%)
+        double angle = absoluteEncoder.getAbsolutePosition().getValue();
+        // angle = absoluteEncoder.getVelocity().getValue() / RobotController.getCurrent5V();
         // Converts to radians
         angle *= 2.0 * Math.PI;
+        // Apply Offset
         angle -= absoluteEncoderOffsetRad;
         return angle * (absoluteEncoderReversed ? -1.0 : 1.0);
     }
@@ -148,10 +155,10 @@ public class SwerveModule {
         // Sets motor speeds
         driveMotor.set(state.speedMetersPerSecond / DriveConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
         turnMotor.set(turnPidController.calculate(getTurnPosition(), state.angle.getRadians()));
-        SmartDashboard.putString("Swerve[" + absoluteEncoder.getChannel() + "] state", state.toString());
-        SmartDashboard.putNumber("Swerve[" + absoluteEncoder.getChannel() + "] absolute", getAbsoluteEncoderRad());
-        SmartDashboard.putNumber("Swerve[" + absoluteEncoder.getChannel() + "] driver encoder", driveEncoder.getPosition());
-        SmartDashboard.putNumber("Swerve[" + absoluteEncoder.getChannel() + "] turn encoder", turnEncoder.getPosition());
+        // SmartDashboard.putString("Swerve[" + absoluteEncoderId + "] state", state.toString());
+        // SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] absolute encoder", getAbsoluteEncoderRad());
+        // SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] driver encoder", driveEncoder.getPosition());
+        // SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] turn encoder", turnEncoder.getPosition());
     }
 
     /**

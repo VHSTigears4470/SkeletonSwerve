@@ -79,7 +79,7 @@ public class SwerveJoystickCommand extends Command {
         swerveSubsystem.setModuleStates(moduleStates);
 
         SmartDashboard.putString("Joystick", "X : " + xSpdFunction.get() + "Y : " + ySpdFunction.get() + " Theta : " + turningSpdFunction.get());
-        SmartDashboard.putString("Chasis", "X : " + chassisSpeeds.vxMetersPerSecond + "Y : " + chassisSpeeds.vyMetersPerSecond + " Theta : " + chassisSpeeds.omegaRadiansPerSecond);
+        SmartDashboard.putString("ChassisSpeeds", "X : " + chassisSpeeds.vxMetersPerSecond + "Y : " + chassisSpeeds.vyMetersPerSecond + " Theta : " + chassisSpeeds.omegaRadiansPerSecond);
     }
 
     @Override
