@@ -70,9 +70,9 @@ public class RobotContainer {
   private void configureBindings() {
         m_driverController.x().onTrue(new SwerveJoystickCommand(
       m_swerveSub, 
-      () -> (double)0.0,
-      () -> (double)1,
-      () -> (double)0,
+      () -> m_driverController.getRawAxis(OIConstants.DRIVER_Y_AXIS),
+      () -> m_driverController.getRawAxis(OIConstants.DRIVER_X_AXIS),
+      () -> m_driverController.getRawAxis(OIConstants.DRIVER_ROT_AXIS),
       // When pressed, changes to robot orientated
       () -> !m_driverController.button(OIConstants.DRIVER_FIELD_ORIENTED_BUTTON_IDX).getAsBoolean()
     ));
@@ -96,13 +96,19 @@ public class RobotContainer {
                         .setKinematics(DriveConstants.DRIVE_KINEMATICS);
 
         // 2. Generate trajectory
-        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(0)),
-                List.of(
-                        new Translation2d(1, 0),
-                        new Translation2d(1, -1)),
-                new Pose2d(2, -1, Rotation2d.fromDegrees(180)),
-                trajectoryConfig);
+        Trajectory trajectory = 
+                TrajectoryGenerator.generateTrajectory(
+                        List.of(
+                                new Pose2d(0, 0, new Rotation2d(0)),
+                                new Pose2d(1, 0, new Rotation2d(0))
+                        ), trajectoryConfig);
+                // TrajectoryGenerator.generateTrajectory(
+                // new Pose2d(0, 0, new Rotation2d(0)),
+                // List.of(
+                //         new Translation2d(1, 0),
+                //         new Translation2d(1, 0)),
+                // new Pose2d(2, -1, Rotation2d.fromDegrees(180)),
+                // trajectoryConfig);
 
         // 3. Define PID controllers for tracking trajectory
         PIDController xController = new PIDController(AutoConstants.P_X_CONTROLLER, 0, 0);
