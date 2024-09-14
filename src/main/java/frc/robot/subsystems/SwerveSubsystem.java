@@ -55,7 +55,7 @@ public class SwerveSubsystem extends SubsystemBase{
     // Gyro
     private final AHRS gyro = new AHRS(SPI.Port.kMXP);
     // Odometry
-    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(DriveConstants.DRIVE_KINEMATICS, new Rotation2d(0), new SwerveModulePosition[]{frontRight.getPosition(), frontLeft.getPosition(), backRight.getPosition(), backLeft.getPosition()});
+    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(DriveConstants.DRIVE_KINEMATICS, new Rotation2d(0), getSwerveModulePosistion());
     /**
      * Inits SwereveSubsystem
      */
@@ -139,6 +139,7 @@ public class SwerveSubsystem extends SubsystemBase{
     }
 
     public SwerveModulePosition[] getSwerveModulePosistion() {
+        // return new SwerveModulePosition[]{frontRight.getPosition(), frontLeft.getPosition(), backRight.getPosition(), backLeft.getPosition()};
         return new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     }
     public SwerveModuleState[] getSwerveModuleState() {

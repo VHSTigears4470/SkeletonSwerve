@@ -72,10 +72,10 @@ public final class Constants {
     public static final boolean FRONT_RIGHT_TURNING_ENCODER_REVERSED = false; // Check
     public static final boolean BACK_RIGHT_TURNING_ENCODER_REVERSED = false; // Check
 
-    public static final boolean BACK_LEFT_DRIVE_ENCODER_REVERSED = false; // Check
-    public static final boolean FRONT_LEFT_DRIVE_ENCODER_REVERSED = true; // Check
-    public static final boolean FRONT_RIGHT_DRIVE_ENCODER_REVERSED = false; // Check
-    public static final boolean BACK_RIGHT_DRIVE_ENCODER_REVERSED = true; // Check
+    public static final boolean BACK_LEFT_DRIVE_ENCODER_REVERSED = !false; // Check
+    public static final boolean FRONT_LEFT_DRIVE_ENCODER_REVERSED = !true; // Check
+    public static final boolean FRONT_RIGHT_DRIVE_ENCODER_REVERSED = !false; // Check
+    public static final boolean BACK_RIGHT_DRIVE_ENCODER_REVERSED = !true; // Check
 
     public static final int BACK_LEFT_DRIVE_ABSOLUTE_ENCODER_PORT = 9; // Check
     public static final int FRONT_LEFT_DRIVE_ABSOLUTE_ENCODER_PORT = 10; // Check
@@ -97,10 +97,10 @@ public final class Constants {
     public static final double FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS = FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_ROTATION * 2 * Math.PI; // Check / Modify
     public static final double BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS = BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_ROTATION * 2 * Math.PI; // Check / Modify
 
-    public static final double PHYSICAL_MAX_SPEED_METER_PER_SECOND = 4; // Modify
-    public static final double PHYSICAL_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND = 2 * 2 * Math.PI; // Modify
+    public static final double PHYSICAL_MAX_SPEED_METER_PER_SECOND = 10; // Modify
+    public static final double PHYSICAL_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND = 3 * 2 * Math.PI; // Modify
 
-    public static final double TELE_DRIVE_MAX_SPEED_METER_PER_SECOND = PHYSICAL_MAX_SPEED_METER_PER_SECOND * 0.25; // 25% power // Modify
+    public static final double TELE_DRIVE_MAX_SPEED_METER_PER_SECOND = PHYSICAL_MAX_SPEED_METER_PER_SECOND * 0.5; // 25% power // Modify
     public static final double TELE_DRIVE_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND = PHYSICAL_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND * 0.25; // 25% power // Modify
     public static final double TELE_DRIVE_MAX_ACCELERATION_UNIT_PER_SECOND = 3; // Modify
     public static final double TELE_DRIVE_MAX_ANGULAR_ACCELERATION_UNIT_PER_SECOND = 3; // Modify
@@ -119,12 +119,12 @@ public final class Constants {
 
   public static final class AutoConstants {
      public static final double MAX_SPEED_METER_PER_SECOND = DriveConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND * 0.25; // 25% power
-        public static final double MAX_ANGULAR_SPEED_RADIAN_PER_SECOND = DriveConstants.PHYSICAL_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND * 0.1; // 10% power
+        public static final double MAX_ANGULAR_SPEED_RADIAN_PER_SECOND = DriveConstants.PHYSICAL_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND * 0.25; // 10% power
         public static final double MAX_ACCELERATION_METER_PER_SECOND_SQUARED = 3;
-        public static final double MAX_ANGULAR_ACCELERATION_RADIAN_PER_SECOND_SQUARED = Math.PI / 4;
-        public static final double P_X_CONTROLLER = 1.5; // Modify
-        public static final double P_Y_CONTROLLER = 1.5; // Modify
-        public static final double P_THETA_CONTROLLER = 3;
+        public static final double MAX_ANGULAR_ACCELERATION_RADIAN_PER_SECOND_SQUARED = 3;//Math.PI / 4;
+        public static final double P_X_CONTROLLER =15;// 0.33;//1.5; // Modify
+        public static final double P_Y_CONTROLLER = 1.5;//0.33;//1.5; // Modify
+        public static final double P_THETA_CONTROLLER = 3;//0.33;//3;
 
         public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = //
                 new TrapezoidProfile.Constraints(

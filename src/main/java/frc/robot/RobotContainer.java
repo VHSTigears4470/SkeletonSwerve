@@ -98,10 +98,13 @@ public class RobotContainer {
         // 2. Generate trajectory
         Trajectory trajectory = 
                 TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(0)),
                         List.of(
-                                new Pose2d(0, 0, new Rotation2d(0)),
-                                new Pose2d(1, 0, new Rotation2d(0))
-                        ), trajectoryConfig);
+                                new Translation2d(1, 0)
+                        ),
+                        new Pose2d(1, 0, new Rotation2d(0)), 
+                        trajectoryConfig
+                );
                 // TrajectoryGenerator.generateTrajectory(
                 // new Pose2d(0, 0, new Rotation2d(0)),
                 // List.of(
