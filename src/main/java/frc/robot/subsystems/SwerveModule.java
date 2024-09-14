@@ -66,6 +66,7 @@ public class SwerveModule {
         this.absoluteEncoderId = absoluteEncoderId;
         // To Modify Values on Smartdashboard for PID, use the go to Test instead of TeleOperated
         SmartDashboard.putData("Swerve[" + absoluteEncoderId + "] PID", turnPidController);
+        resetEncoders();
     }
 
     /**
