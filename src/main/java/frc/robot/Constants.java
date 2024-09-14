@@ -46,6 +46,8 @@ public final class Constants {
 
   public static class DriveConstants {
 
+    public static final int ROBOT_INVERT = -1;
+
     public static final double TRACK_WIDTH = Units.inchesToMeters(19); // Check
     // Distance between right and left wheels
     public static final double WHEEL_BASE = Units.inchesToMeters(19); // Check
@@ -72,10 +74,10 @@ public final class Constants {
     public static final boolean FRONT_RIGHT_TURNING_ENCODER_REVERSED = false; // Check
     public static final boolean BACK_RIGHT_TURNING_ENCODER_REVERSED = false; // Check
 
-    public static final boolean BACK_LEFT_DRIVE_ENCODER_REVERSED = !false; // Check
-    public static final boolean FRONT_LEFT_DRIVE_ENCODER_REVERSED = !true; // Check
-    public static final boolean FRONT_RIGHT_DRIVE_ENCODER_REVERSED = !false; // Check
-    public static final boolean BACK_RIGHT_DRIVE_ENCODER_REVERSED = !true; // Check
+    public static final boolean BACK_LEFT_DRIVE_ENCODER_REVERSED = true; // Check
+    public static final boolean FRONT_LEFT_DRIVE_ENCODER_REVERSED = false; // Check
+    public static final boolean FRONT_RIGHT_DRIVE_ENCODER_REVERSED = true; // Check
+    public static final boolean BACK_RIGHT_DRIVE_ENCODER_REVERSED = false; // Check
 
     public static final int BACK_LEFT_DRIVE_ABSOLUTE_ENCODER_PORT = 9; // Check
     public static final int FRONT_LEFT_DRIVE_ABSOLUTE_ENCODER_PORT = 10; // Check
@@ -113,6 +115,10 @@ public final class Constants {
     public static final int DRIVER_X_AXIS = 0; // Check
     public static final int DRIVER_ROT_AXIS = 4; // Check
     public static final int DRIVER_FIELD_ORIENTED_BUTTON_IDX = 1; // Check
+
+    public static final int DRIVER_Y_AXIS_INVERTED = 1;
+    public static final int DRIVER_X_AXIS_INVERTED = 1;
+    public static final int DRIVER_ROT_AXIS_INVERTED = 1;
 
     public static final double DRIVER_DEADBAND = 0.1; // Modify
   }

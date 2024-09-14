@@ -130,7 +130,7 @@ public class SwerveModule {
      * @return SwerveModuleState of this moduel's drive and turn motor's position
      */
     public SwerveModuleState getState() {
-        return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurnPosition()));
+        return new SwerveModuleState(DriveConstants.ROBOT_INVERT * getDriveVelocity(), new Rotation2d(getTurnPosition()));
     }
 
     /**
@@ -138,7 +138,7 @@ public class SwerveModule {
      * @return SwereveModulePosition of this module's drive and turn motor's position
      */
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(getDrivePosition(), new Rotation2d(getTurnPosition()));
+        return new SwerveModulePosition(DriveConstants.ROBOT_INVERT *getDrivePosition(), new Rotation2d(getTurnPosition()));
     }
 
     /**
@@ -158,7 +158,7 @@ public class SwerveModule {
         turnMotor.set(turnPidController.calculate(getTurnPosition(), state.angle.getRadians()));
         // SmartDashboard.putString("Swerve[" + absoluteEncoderId + "] state", state.toString());
         // SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] absolute encoder", getAbsoluteEncoderRad());
-        // SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] driver encoder", driveEncoder.getPosition());
+        SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] driver encoder", driveEncoder.getPosition());
         // SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] turn encoder", turnEncoder.getPosition());
     }
 
