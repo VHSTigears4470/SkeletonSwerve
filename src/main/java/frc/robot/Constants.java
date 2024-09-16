@@ -31,9 +31,9 @@ public final class Constants {
     public static final double DRIVE_ENCODER_RPM_TO_METER_PER_SECOND = DRIVE_ENCODER_ROTATION_TO_METER / 60;
     public static final double TURN_ENCODER_RPM_TO_METER_PER_SECOND = TURN_ENCODER_ROTATION_TO_RADIANS / 60;
 
-    public static final double P_TURN = 0.33; // originally 0.05
+    public static final double P_TURN = 0.37; //0.33; // originally 0.05
     public static final double I_TURN = 0; // originally 0
-    public static final double D_TURN = 0; // originally 0.05
+    public static final double D_TURN = 0.001; // originally 0.05
 
     public static final double P_DRIVE = 0.0000000001; // originally 0.000000005
     public static final double I_DRIVE = 0; // originally 0
