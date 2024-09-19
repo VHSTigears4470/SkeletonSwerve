@@ -120,7 +120,7 @@ public final class Constants {
     public static final int DRIVER_X_AXIS_INVERTED = 1;
     public static final int DRIVER_ROT_AXIS_INVERTED = 1;
 
-    public static final double DRIVER_DEADBAND = 0.1; // Modify
+    public static final double DRIVER_DEADBAND = 0.25 ; // Modify
   }
 
   public static final class AutoConstants {
