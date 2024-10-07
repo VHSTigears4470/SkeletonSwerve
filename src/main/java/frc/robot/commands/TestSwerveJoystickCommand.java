@@ -11,11 +11,13 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 
-public class SwerveJoystickCommand extends Command {
+public class TestSwerveJoystickCommand extends Command {
     private final SwerveSubsystem swerveSubsystem;
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction;
     private final Supplier<Boolean> fieldOrientedFunction;
     private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
+    private final boolean noStillMovement;
+    private final String statusName;
 
     /**
      * Contructs a Command to control the swerve via joystick
@@ -25,9 +27,9 @@ public class SwerveJoystickCommand extends Command {
      * @param turningSpdFunction turning speed (rotation) not angle control
      * @param fieldOrientedFunction field orientation (true for field orientated, false for robot orientated)
      */
-    public SwerveJoystickCommand(SwerveSubsystem swerveSubsystem,
+    public TestSwerveJoystickCommand(SwerveSubsystem swerveSubsystem,
             Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction,
-            Supplier<Boolean> fieldOrientedFunction) {
+            Supplier<Boolean> fieldOrientedFunction, boolean noStillMovement, String statusName) {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
@@ -36,12 +38,14 @@ public class SwerveJoystickCommand extends Command {
         this.xLimiter = new SlewRateLimiter(DriveConstants.TELE_DRIVE_MAX_ACCELERATION_UNIT_PER_SECOND);
         this.yLimiter = new SlewRateLimiter(DriveConstants.TELE_DRIVE_MAX_ACCELERATION_UNIT_PER_SECOND);
         this.turningLimiter = new SlewRateLimiter(DriveConstants.TELE_DRIVE_MAX_ANGULAR_ACCELERATION_UNIT_PER_SECOND);
+        this.noStillMovement = noStillMovement;
+        this.statusName = statusName;
         addRequirements(swerveSubsystem);
     }
 
     @Override
     public void initialize() {
-        SmartDashboard.putString("Drive Mode", "Default / Field Oriented");
+        SmartDashboard.putString("Drive Mode", statusName);
     }
 
     @Override
@@ -77,7 +81,7 @@ public class SwerveJoystickCommand extends Command {
         SwerveModuleState[] moduleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
 
         // 6. Output each module states to wheels
-        swerveSubsystem.setModuleStates(moduleStates);
+        swerveSubsystem.setModuleStates(moduleStates, noStillMovement);
 
         SmartDashboard.putString("Joystick", "X : " + xSpdFunction.get() + "Y : " + ySpdFunction.get() + " Theta : " + turningSpdFunction.get());
         SmartDashboard.putString("ChassisSpeeds", "X : " + chassisSpeeds.vxMetersPerSecond + "Y : " + chassisSpeeds.vyMetersPerSecond + " Theta : " + chassisSpeeds.omegaRadiansPerSecond);

@@ -30,6 +30,8 @@ public class SwerveModule {
     private final double absoluteEncoderOffsetRad;
 
     private final int absoluteEncoderId;
+    private final int turnMotorId;
+    private final int driveMotorId;
 
     /**
      * Initializes a SwerveModule for the SwerveSubsystem
@@ -41,12 +43,12 @@ public class SwerveModule {
      * @param absoluteEncoderOffset Offset of the absolute encoder to make the wheels "straight"
      * @param absoluteEncoderReversed If the encoder is reversed
      */
-    public SwerveModule(int driveMotorID, int turnMotorId, boolean driveMotorReversed, boolean turnMotorReversed, int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed) {
+    public SwerveModule(int driveMotorId, int turnMotorId, boolean driveMotorReversed, boolean turnMotorReversed, int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed) {
         this.absoluteEncoderReversed = absoluteEncoderReversed;
         absoluteEncoderOffsetRad = absoluteEncoderOffset;
         absoluteEncoder = new CANcoder(absoluteEncoderId);
         
-        driveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
+        driveMotor = new CANSparkMax(driveMotorId, MotorType.kBrushless);
         turnMotor = new CANSparkMax(turnMotorId, MotorType.kBrushless);
 
         driveMotor.setInverted(driveMotorReversed);
@@ -64,8 +66,10 @@ public class SwerveModule {
         turnPidController.enableContinuousInput(-Math.PI, Math.PI);
 
         this.absoluteEncoderId = absoluteEncoderId;
+        this.turnMotorId = turnMotorId;
+        this.driveMotorId = driveMotorId;
         // To Modify Values on Smartdashboard for PID, use the go to Test instead of TeleOperated
-        SmartDashboard.putData("Swerve[" + absoluteEncoderId + "] PID", turnPidController);
+        SmartDashboard.putData("Swerve[" + turnMotorId + "] PID", turnPidController);
         resetEncoders();
     }
 
@@ -144,10 +148,11 @@ public class SwerveModule {
     /**
      * Moves the module's turn and drive motors to the inputted state
      * @param state the SwereveModuleState this module should aim for
+     * @param noStillMovement true to prevent movement when no motion
      */
-    public void setDesiredState(SwerveModuleState state) {
+    public void setDesiredState(SwerveModuleState state, boolean noStillMovement) {
         // Prevents only turning motion without movement (helps prevents robot from shifting when still)
-        if(Math.abs(state.speedMetersPerSecond) < 0.001) {
+        if(noStillMovement && Math.abs(state.speedMetersPerSecond) < 0.001) {
             stop();
             return;
         }
@@ -158,9 +163,20 @@ public class SwerveModule {
         turnMotor.set(turnPidController.calculate(getTurnPosition(), state.angle.getRadians()));
         // SmartDashboard.putString("Swerve[" + absoluteEncoderId + "] state", state.toString());
         // SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] absolute encoder", getAbsoluteEncoderRad());
-        SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] driver encoder", driveEncoder.getPosition());
-        // SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] turn encoder", turnEncoder.getPosition());
+        SmartDashboard.putNumber("Swerve[" + driveMotorId + "] driver encoder", driveEncoder.getPosition());
+        SmartDashboard.putNumber("Swerve[" + turnMotorId + "] turn encoder", turnEncoder.getPosition());
     }
+
+    /**
+     * Keeps turning the motors by 90 degrees off current
+     * @param forward should motor rotate "forwards" or "backwards"
+     */
+    public void testTurnMotors(double position) {
+        turnMotor.set(turnPidController.calculate(getTurnPosition(), position));
+        SmartDashboard.putNumber("Swerve[" + turnMotorId + "] turn encoder", turnEncoder.getPosition());
+
+    }
+
 
     /**
      * Stops the drive and turn motor by setting their speed to 0

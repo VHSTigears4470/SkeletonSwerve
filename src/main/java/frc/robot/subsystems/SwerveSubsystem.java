@@ -92,6 +92,8 @@ public class SwerveSubsystem extends SubsystemBase{
             try {
                 Thread.sleep(1000);
                 zeroHeading();
+                // Reset to avoid problems since the Gyro was modified
+                resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
             } catch (Exception e) {
             }
         }).start();
@@ -150,6 +152,10 @@ public class SwerveSubsystem extends SubsystemBase{
     public void periodic() {
         odometer.update(getRotation2d(), getSwerveModulePosistion());
         SmartDashboard.putNumber("Robot Heading", getHeading());
+        SmartDashboard.putNumber("Robot Heading", gyro.getRoll());
+        SmartDashboard.putNumber("Yaw", gyro.getYaw());
+        SmartDashboard.putNumber("Pitch", gyro.getPitch());
+
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
     }
 
@@ -168,13 +174,49 @@ public class SwerveSubsystem extends SubsystemBase{
      * @param desiredStates the SwereveModuleState list of each motor, 
      * front left is index 0, front right is index 1, back left is index 2, 
      * back right is index 3
+     * @param noStillMovement true to prevent wheels from rotating when there is no motion to avoid robot shifting
+     */
+    public void setModuleStates(SwerveModuleState[] desiredStates, boolean noStillMovement) {
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
+        frontLeft.setDesiredState(desiredStates[0], noStillMovement);
+        frontRight.setDesiredState(desiredStates[1], noStillMovement);
+        backLeft.setDesiredState(desiredStates[2], noStillMovement);
+        backRight.setDesiredState(desiredStates[3], noStillMovement);
+    }
+
+    /**
+     * Normalize and sets the desired state / speed of each wheels with wheel rotating only if there is movement
+     * @param desiredStates the SwereveModuleState list of each motor, 
+     * front left is index 0, front right is index 1, back left is index 2, 
+     * back right is index 3
+     * @param noStillMovement true to prevent wheels from rotating when there is no motion to avoid robot shifting
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
-        frontLeft.setDesiredState(desiredStates[0]);
-        frontRight.setDesiredState(desiredStates[1]);
-        backLeft.setDesiredState(desiredStates[2]);
-        backRight.setDesiredState(desiredStates[3]);
+        frontLeft.setDesiredState(desiredStates[0], true);
+        frontRight.setDesiredState(desiredStates[1], true);
+        backLeft.setDesiredState(desiredStates[2], true);
+        backRight.setDesiredState(desiredStates[3], true);
+    }
+
+    public void testTurnMotors(boolean forward) {
+        double pos;
+        double val = 10;
+        if(forward)
+            pos = frontLeft.getTurnPosition() + val;
+        else
+            pos = frontLeft.getTurnPosition() - val;
+        frontLeft.testTurnMotors(pos);
+        frontRight.testTurnMotors(pos);
+        backLeft.testTurnMotors(pos);
+        backRight.testTurnMotors(pos);
+    }
+
+    public void testTurnMotors(boolean forward, double pos) {
+        frontLeft.testTurnMotors(pos);
+        frontRight.testTurnMotors(pos);
+        backLeft.testTurnMotors(pos);
+        backRight.testTurnMotors(pos);
     }
 
     /**
@@ -182,7 +224,7 @@ public class SwerveSubsystem extends SubsystemBase{
      * @param chassisSpeeds the ChassisSpeeds of the entire swerve
      */
     public void setModuleStates(ChassisSpeeds chassisSpeeds) {
-        setModuleStates(DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds));
+        setModuleStates(DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds), true);
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {

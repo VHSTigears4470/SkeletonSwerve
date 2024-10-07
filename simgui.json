@@ -1,0 +1,14 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Swerve[10] PID": "PIDController",
+      "/SmartDashboard/Swerve[11] PID": "PIDController",
+      "/SmartDashboard/Swerve[12] PID": "PIDController",
+      "/SmartDashboard/Swerve[9] PID": "PIDController"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}
