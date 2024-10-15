@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -199,17 +201,26 @@ public class SwerveSubsystem extends SubsystemBase{
         backRight.setDesiredState(desiredStates[3], true);
     }
 
-    public void testTurnMotors(boolean forward) {
+    public void testTurnMotors(DoubleSupplier[] wheelPos, boolean forward) {
         double pos;
         double val = 10;
         if(forward)
-            pos = frontLeft.getTurnPosition() + val;
+            val *= 1;
         else
-            pos = frontLeft.getTurnPosition() - val;
-        frontLeft.testTurnMotors(pos);
-        frontRight.testTurnMotors(pos);
-        backLeft.testTurnMotors(pos);
-        backRight.testTurnMotors(pos);
+            val *= -1;
+        frontLeft.testTurnMotors(wheelPos[0].getAsDouble() + val);
+        frontRight.testTurnMotors(wheelPos[1].getAsDouble() + val);
+        backLeft.testTurnMotors(wheelPos[2].getAsDouble() + val);
+        backRight.testTurnMotors(wheelPos[3].getAsDouble() + val);
+    }
+
+    public DoubleSupplier[] getWheelRotationSupplier() {
+        return new DoubleSupplier[]{
+            () -> frontLeft.getTurnPosition(),
+            () -> frontRight.getTurnPosition(),
+            () -> backLeft.getTurnPosition(),
+            () -> backRight.getTurnPosition()
+        };
     }
 
     public void testTurnMotors(boolean forward, double pos) {

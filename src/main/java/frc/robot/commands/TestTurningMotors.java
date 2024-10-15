@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -14,6 +15,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class TestTurningMotors extends Command {
     private final SwerveSubsystem swerveSubsystem;
     private final boolean forward;
+    private final DoubleSupplier[] wheelRotationSupplier;
 
     /**
      * Contructs a Command to control the swerve via joystick
@@ -26,6 +28,7 @@ public class TestTurningMotors extends Command {
     public TestTurningMotors(SwerveSubsystem swerveSubsystem, boolean forward) {
         this.swerveSubsystem = swerveSubsystem;
         this.forward = forward;
+        wheelRotationSupplier = swerveSubsystem.getWheelRotationSupplier();
         addRequirements(swerveSubsystem);
     }
 
@@ -36,7 +39,7 @@ public class TestTurningMotors extends Command {
 
     @Override
     public void execute() {
-        swerveSubsystem.testTurnMotors(forward);
+        swerveSubsystem.testTurnMotors(wheelRotationSupplier, forward);
     }
 
     @Override

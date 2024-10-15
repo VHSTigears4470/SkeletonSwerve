@@ -81,14 +81,20 @@ public class RobotContainer {
         //         // When pressed, changes to robot orientated
         //         () -> !m_driverController.button(OIConstants.DRIVER_FIELD_ORIENTED_BUTTON_IDX).getAsBoolean()
         // ));
-        int preset = 3;
+        int preset = 1;
 
         if(preset == 0) {
-                // Reset Odom to center
+                // Reset Odom
                 m_driverController.b().onTrue(
-                        new InstantCommand(
-                                () -> m_swerveSub.resetOdometry(new Pose2d(0, 0, new Rotation2d(0))), 
-                                m_swerveSub
+                        new SequentialCommandGroup(
+                                new InstantCommand(
+                                        ()-> m_swerveSub.zeroHeading(),
+                                        m_swerveSub
+                                ),
+                                new InstantCommand(
+                                        ()-> m_swerveSub.resetOdometry(new Pose2d()),
+                                        m_swerveSub
+                                )
                         )
                 );
 
@@ -100,7 +106,7 @@ public class RobotContainer {
                         )
                 );
 
-                // Straighten Wheels (hopefully)
+                // Straighten Wheels
                 m_driverController.x().whileTrue(
                         new TestSwerveJoystickCommand(
                                 m_swerveSub,
@@ -141,7 +147,7 @@ public class RobotContainer {
                         )
                 );
 
-                // rotate only 
+                // rotate clockwise with joystick input
                 m_driverController.leftBumper().whileTrue(
                         new TestSwerveJoystickCommand(
                                 m_swerveSub,
@@ -154,7 +160,7 @@ public class RobotContainer {
                         )
                 );
 
-                // rotate only 
+                // rotate counter clockwise with joystick input
                 m_driverController.leftTrigger().whileTrue(
                         new TestSwerveJoystickCommand(
                                 m_swerveSub,
@@ -167,6 +173,26 @@ public class RobotContainer {
                         )
                 );
         } else if(preset == 1) {
+                /*
+                 * Preset can:
+                 * right trigger = reset odom
+                 * 
+                 * y + left trigger = forwards motion
+                 * y = wheel forward rotation
+                 * 
+                 * b = right motion
+                 * b = wheel right rotation
+                 * 
+                 * a + left trigger = backwards motion
+                 * a = wheel backward roation
+                 * 
+                 * x + left trigger = left motion
+                 * x = wheel left rotation
+                 * 
+                 * right bumper = wheel rotation clockwise
+                 * left bumper = wheel rotation clockwise
+                 */
+
                 // Reset odom, reset encoders, go to 0 pos (turn), turn, 
                 // Reset pos = > zero gyro -> reset odom
                 // turn (idk why )
@@ -183,151 +209,84 @@ public class RobotContainer {
                         )
                 );
 
-                // Make Wheels Straight
-                m_driverController.leftTrigger().onTrue(
-                        new InstantCommand(
-                                () -> m_swerveSub.testTurnMotors(true, 0),
-                                m_swerveSub
-                        )
-                );
-
-                // Rotate wheels forwards only
-                m_driverController.rightBumper().whileTrue(
-                        new TestTurningMotors(m_swerveSub, true)
-                );
-
-                // Rotate wheels backwards only
-                m_driverController.leftBumper().whileTrue(
-                        new TestTurningMotors(m_swerveSub, false)
-                );
-
-                // move in all four directions
-
-                // right? 
-                m_driverController.b().whileTrue(
-                        new TestSwerveJoystickCommand(
+                // right movement
+                m_driverController.b().and(m_driverController.leftTrigger()).whileTrue(
+                         new TestSwerveJoystickCommand(
                                 m_swerveSub,
                                 () -> (double) 0.0,
                                 () -> (double) 0.4,
                                 () -> (double) 0.0,
                                 () -> (boolean) false,
                                 false,
-                                "Right"
+                                "Right Movement"
                         )
                 );
 
-                // left? 
-                m_driverController.x().whileTrue(
-                        new TestSwerveJoystickCommand(
+                // right rotation
+                m_driverController.b().and(m_driverController.leftTrigger().negate()).whileTrue(
+                        new TestSetPosCommand(m_swerveSub, true, Math.PI * 0.5)
+                );
+
+                // left movement
+                m_driverController.x().and(m_driverController.leftTrigger()).whileTrue(
+                         new TestSwerveJoystickCommand(
                                 m_swerveSub,
                                 () -> (double) 0.0,
                                 () -> (double) -0.4,
                                 () -> (double) 0.0,
                                 () -> (boolean) false,
                                 false,
-                                "Left"
+                                "Left Movement"
                         )
                 );
 
-                // forwards? 
-                m_driverController.y().whileTrue(
-                        new TestSwerveJoystickCommand(
+                // left rotation
+                m_driverController.x().and(m_driverController.leftTrigger().negate()).whileTrue(
+                        new TestSetPosCommand(m_swerveSub, true, Math.PI * 1.5)
+                );
+
+                // forwards movement
+                m_driverController.y().and(m_driverController.leftTrigger()).whileTrue(
+                         new TestSwerveJoystickCommand(
                                 m_swerveSub,
                                 () -> (double) 0.4,
                                 () -> (double) 0.0,
                                 () -> (double) 0.0,
                                 () -> (boolean) false,
                                 false,
-                                "Forward"
+                                "Forward Movement"
                         )
                 );
 
-                // backwards? 
-                m_driverController.a().whileTrue(
-                        new TestSwerveJoystickCommand(
-                                m_swerveSub,
-                                () -> (double) -0.4,
-                                () -> (double) 0.0,
-                                () -> (double) 0.0,
-                                () -> (boolean) false,
-                                false,
-                                "Backward"
-                        )
-                );
-        } else if(preset == 2) {
-                // Reset odom, reset encoders, go to 0 pos (turn), turn, 
-                // Reset pos = > zero gyro -> reset odom
-                // turn (idk why )
-                m_driverController.a().onTrue(
-                        new SequentialCommandGroup(
-                                new InstantCommand(
-                                        ()-> m_swerveSub.zeroHeading(),
-                                        m_swerveSub
-                                ),
-                                new InstantCommand(
-                                        ()-> m_swerveSub.resetOdometry(new Pose2d()),
-                                        m_swerveSub
-                                )
-                        )
-                );
-
-                // Make Wheels Straight
-                m_driverController.x().onTrue(
-                        new InstantCommand(
-                                () -> m_swerveSub.testTurnMotors(true, 0),
-                                m_swerveSub
-                        )
-                );
-
-                // Rotate wheels forwards only
-                m_driverController.rightBumper().whileTrue(
-                        new TestTurningMotors(m_swerveSub, true)
-                );
-
-                // Rotate wheels backwards only
-                m_driverController.rightTrigger().whileTrue(
-                        new TestTurningMotors(m_swerveSub, false)
-                );
-        } else if(preset == 3) {
-                // Reset odom, reset encoders, go to 0 pos (turn), turn, 
-                // Reset pos = > zero gyro -> reset odom
-                // turn (idk why )
-                m_driverController.rightTrigger().onTrue(
-                        new SequentialCommandGroup(
-                                new InstantCommand(
-                                        ()-> m_swerveSub.zeroHeading(),
-                                        m_swerveSub
-                                ),
-                                new InstantCommand(
-                                        ()-> m_swerveSub.resetOdometry(new Pose2d()),
-                                        m_swerveSub
-                                )
-                        )
-                );
-
-                // Make Wheels Straight
-                m_driverController.y().whileTrue(
+                // forwards rotation
+                m_driverController.y().and(m_driverController.leftTrigger().negate()).whileTrue(
                         new TestSetPosCommand(m_swerveSub, true, 0)
                 );
-                // Make Wheels Straight
-                m_driverController.x().whileTrue(
-                        new TestSetPosCommand(m_swerveSub, true, 270)
-                );
-                // Make Wheels Straight
-                m_driverController.b().whileTrue(
-                        new TestSetPosCommand(m_swerveSub, true, 90)
-                );
-                // Make Wheels Straight
-                m_driverController.a().whileTrue(
-                        new TestSetPosCommand(m_swerveSub, true, 180)
+
+                // backwards movement
+                m_driverController.a().and(m_driverController.leftTrigger()).whileTrue(
+                         new TestSwerveJoystickCommand(
+                                m_swerveSub,
+                                () -> (double) -0.4,
+                                () -> (double) 0.0,
+                                () -> (double) 0.0,
+                                () -> (boolean) false,
+                                false,
+                                "Backward Movement"
+                        )
                 );
 
-                // Rotate wheels forwards only
-                m_driverController.leftTrigger().whileTrue(
+                // backwards rotation
+                m_driverController.a().and(m_driverController.leftTrigger().negate()).whileTrue(
+                        new TestSetPosCommand(m_swerveSub, true, Math.PI)
+                );
+
+                // Rotate wheels clockwise
+                m_driverController.rightBumper().whileTrue(
                         new TestTurningMotors(m_swerveSub, true)
                 );
 
-                // Rotate wheels backwards only
+                // Rotate wheels counterclockwise
                 m_driverController.leftBumper().whileTrue(
                         new TestTurningMotors(m_swerveSub, false)
                 );
