@@ -11,6 +11,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -58,6 +60,8 @@ public class SwerveSubsystem extends SubsystemBase{
     private final AHRS gyro = new AHRS(SPI.Port.kMXP);
     // Odometry
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(DriveConstants.DRIVE_KINEMATICS, new Rotation2d(0), getSwerveModulePosistion());
+    // SwerveModuleState Publisher for AdvantageScope
+    StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
     /**
      * Inits SwereveSubsystem
      */
@@ -159,6 +163,7 @@ public class SwerveSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Pitch", gyro.getPitch());
 
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+        publisher.set(getSwerveModuleState());
     }
 
     /**
