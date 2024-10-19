@@ -6,6 +6,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.struct.Pose2dStruct;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -13,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -61,7 +63,9 @@ public class SwerveSubsystem extends SubsystemBase{
     // Odometry
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(DriveConstants.DRIVE_KINEMATICS, new Rotation2d(0), getSwerveModulePosistion());
     // SwerveModuleState Publisher for AdvantageScope
-    StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+    private final StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
+    .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+
     /**
      * Inits SwereveSubsystem
      */
@@ -151,7 +155,12 @@ public class SwerveSubsystem extends SubsystemBase{
         return new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     }
     public SwerveModuleState[] getSwerveModuleState() {
-        return new SwerveModuleState[]{frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState()};
+        return new SwerveModuleState[] {
+            frontLeft.getState(), 
+            frontRight.getState(), 
+            backLeft.getState(), 
+            backRight.getState()
+        };
     }
 
     @Override
@@ -163,7 +172,26 @@ public class SwerveSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Pitch", gyro.getPitch());
 
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
-        publisher.set(getSwerveModuleState());
+        SwerveModuleState[] moudleStates = getSwerveModuleState();
+        publisher.set(moudleStates);
+
+        SmartDashboard.putNumberArray(
+            "StateSmartDashboard"
+            , new double[]{
+                moudleStates[0].angle.getRadians(),
+                moudleStates[0].speedMetersPerSecond,
+                moudleStates[1].angle.getRadians(),
+                moudleStates[1].speedMetersPerSecond,
+                moudleStates[2].angle.getRadians(),
+                moudleStates[2].speedMetersPerSecond,
+                moudleStates[3].angle.getRadians(),
+                moudleStates[3].speedMetersPerSecond,
+            }
+        );
+        
+        // SmartDashboard.putNumberArray(
+        //     "StatesCopy", 
+        // );
     }
 
     /**
