@@ -35,6 +35,8 @@ public final class Constants {
     public static final double I_TURN = 0; // originally 0
     public static final double D_TURN = 0.001; // originally 0.05
 
+    public static final boolean IS_USING_PID_DRIVE = false;
+
     public static final double P_DRIVE = 0.0000000001; // originally 0.000000005
     public static final double I_DRIVE = 0; // originally 0
     public static final double D_DRIVE = 0; // originally 0.4
@@ -42,6 +44,10 @@ public final class Constants {
     public static final double IZONE_DRIVE = 0; // originally 0
     public static final double MIN_DRIVE = -1; // originally -1
     public static final double MAX_DRIVE = 1; // originally -1
+
+    public static final double FEEDFORWARD_S_DRIVE = 0; // Change
+    public static final double FEEDFORWARD_V_DRIVE = 0; // Change
+    public static final double FEEDFORWARD_A_DRIVE = 0; // Change, but can leave at zero if needed
   }
 
   public static class DriveConstants {
@@ -59,15 +65,15 @@ public final class Constants {
       new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2)
     );
 
-    public static final int BACK_LEFT_DRIVE_MOTOR_PORT = 2; // Check
-    public static final int FRONT_LEFT_DRIVE_MOTOR_PORT = 4; // Check
-    public static final int FRONT_RIGHT_DRIVE_MOTOR_PORT = 6; // Check
-    public static final int BACK_RIGHT_DRIVE_MOTOR_PORT = 8; // Check
+    public static final int BACK_LEFT_DRIVE_MOTOR_PORT = 2; // Check 2
+    public static final int FRONT_LEFT_DRIVE_MOTOR_PORT = 4; // Check 4
+    public static final int FRONT_RIGHT_DRIVE_MOTOR_PORT = 6; // Check 6 
+    public static final int BACK_RIGHT_DRIVE_MOTOR_PORT = 8; // Check 8
 
-    public static final int BACK_LEFT_TURNING_MOTOR_PORT = 1; // Check
-    public static final int FRONT_LEFT_TURNING_MOTOR_PORT = 3; // Check
-    public static final int FRONT_RIGHT_TURNING_MOTOR_PORT = 5; // Check
-    public static final int BACK_RIGHT_TURNING_MOTOR_PORT = 7; // Check
+    public static final int BACK_LEFT_TURNING_MOTOR_PORT = 1; // Right // 0.22 // 0.28
+    public static final int FRONT_LEFT_TURNING_MOTOR_PORT = 3; // Right // 0.20 // 0.267
+    public static final int FRONT_RIGHT_TURNING_MOTOR_PORT = 5; // Right // 0.22 // 0.36
+    public static final int BACK_RIGHT_TURNING_MOTOR_PORT = 7; // Right // 0.225 // 0.366
 
     public static final boolean BACK_LEFT_TURNING_ENCODER_REVERSED = false; // Check
     public static final boolean FRONT_LEFT_TURNING_ENCODER_REVERSED = false; // Check

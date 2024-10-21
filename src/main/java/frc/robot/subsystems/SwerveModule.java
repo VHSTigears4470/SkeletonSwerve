@@ -5,11 +5,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
@@ -22,8 +21,11 @@ public class SwerveModule {
     // Encoders
     private final RelativeEncoder driveEncoder;
     private final RelativeEncoder turnEncoder;
+    // Feedfowrad
+    private final SimpleMotorFeedforward driveFeedforward;
     // PID
     private final PIDController turnPidController;
+    private final PIDController drivePidController;
     // Absolute Encoder with Settings
     private final CANcoder absoluteEncoder;
     private final boolean absoluteEncoderReversed;
@@ -43,7 +45,9 @@ public class SwerveModule {
      * @param absoluteEncoderOffset Offset of the absolute encoder to make the wheels "straight"
      * @param absoluteEncoderReversed If the encoder is reversed
      */
-    public SwerveModule(int driveMotorId, int turnMotorId, boolean driveMotorReversed, boolean turnMotorReversed, int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed) {
+    public SwerveModule(
+        int driveMotorId, int turnMotorId, boolean driveMotorReversed, boolean turnMotorReversed, 
+        int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed) {
         this.absoluteEncoderReversed = absoluteEncoderReversed;
         absoluteEncoderOffsetRad = absoluteEncoderOffset;
         absoluteEncoder = new CANcoder(absoluteEncoderId);
@@ -59,8 +63,12 @@ public class SwerveModule {
 
         driveEncoder.setPositionConversionFactor(ModuleConstants.DRIVE_ENCODER_ROTATION_TO_METER);
         driveEncoder.setVelocityConversionFactor(ModuleConstants.DRIVE_ENCODER_RPM_TO_METER_PER_SECOND);
+        
         turnEncoder.setPositionConversionFactor(ModuleConstants.TURN_ENCODER_ROTATION_TO_RADIANS);
         turnEncoder.setVelocityConversionFactor(ModuleConstants.TURN_ENCODER_RPM_TO_METER_PER_SECOND);
+
+        driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.FEEDFORWARD_S_DRIVE, ModuleConstants.FEEDFORWARD_V_DRIVE, ModuleConstants.FEEDFORWARD_A_DRIVE);
+        drivePidController = new PIDController(ModuleConstants.P_DRIVE, ModuleConstants.I_DRIVE, ModuleConstants.D_DRIVE);
 
         turnPidController = new PIDController(ModuleConstants.P_TURN, ModuleConstants.I_TURN, ModuleConstants.D_TURN);
         turnPidController.enableContinuousInput(-Math.PI, Math.PI);
@@ -70,6 +78,7 @@ public class SwerveModule {
         this.driveMotorId = driveMotorId;
         // To Modify Values on Smartdashboard for PID, use the go to Test instead of TeleOperated
         SmartDashboard.putData("Swerve[" + turnMotorId + "] PID", turnPidController);
+        SmartDashboard.putData("Swerve[" + driveMotorId + "] PID", drivePidController);
         resetEncoders();
     }
 
@@ -159,7 +168,11 @@ public class SwerveModule {
         // Finds best route to rotate module (90 degrees turns at max)
         state = SwerveModuleState.optimize(state, getState().angle);
         // Sets motor speeds
-        driveMotor.set(state.speedMetersPerSecond / DriveConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
+        if(ModuleConstants.IS_USING_PID_DRIVE) {
+            driveMotor.set(driveFeedforward.calculate(state.speedMetersPerSecond) + drivePidController.calculate(state.speedMetersPerSecond));
+        } else {
+            driveMotor.set(state.speedMetersPerSecond / DriveConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
+        }
         turnMotor.set(turnPidController.calculate(getTurnPosition(), state.angle.getRadians()));
         // SmartDashboard.putString("Swerve[" + absoluteEncoderId + "] state", state.toString());
         // SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] absolute encoder", getAbsoluteEncoderRad());
@@ -174,7 +187,6 @@ public class SwerveModule {
     public void testTurnMotors(double position) {
         turnMotor.set(turnPidController.calculate(getTurnPosition(), position));
         SmartDashboard.putNumber("Swerve[" + turnMotorId + "] turn encoder", turnEncoder.getPosition());
-
     }
 
 
