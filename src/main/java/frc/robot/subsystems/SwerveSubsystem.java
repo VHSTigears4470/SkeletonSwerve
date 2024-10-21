@@ -63,8 +63,13 @@ public class SwerveSubsystem extends SubsystemBase{
     // Odometry
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(DriveConstants.DRIVE_KINEMATICS, new Rotation2d(0), getSwerveModulePosistion());
     // SwerveModuleState Publisher for AdvantageScope
-    private final StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
-    .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+    private final StructArrayPublisher<SwerveModuleState> realStatesPublisher = NetworkTableInstance.getDefault()
+    .getStructArrayTopic("RealStates", SwerveModuleState.struct).publish();
+    private final StructArrayPublisher<SwerveModuleState> desiredStatesPublisher = NetworkTableInstance.getDefault()
+    .getStructArrayTopic("DesiredStates", SwerveModuleState.struct).publish();
+    private final StructArrayPublisher<SwerveModuleState> dummyPublisher = NetworkTableInstance.getDefault()
+    .getStructArrayTopic("DummyStates", SwerveModuleState.struct).publish();
+    private SwerveModuleState[] desiredModuleStates; 
 
     /**
      * Inits SwereveSubsystem
@@ -97,6 +102,7 @@ public class SwerveSubsystem extends SubsystemBase{
             this // Reference to this subsystem to set requirements
         );
         */
+        desiredModuleStates = new SwerveModuleState[]{new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()};
         // Waits for gyro to boot up (takes around a second) then resets it heading
         new Thread(() -> {
             try {
@@ -173,10 +179,19 @@ public class SwerveSubsystem extends SubsystemBase{
 
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
         SwerveModuleState[] moudleStates = getSwerveModuleState();
-        publisher.set(moudleStates);
+        realStatesPublisher.set(moudleStates);
+        desiredStatesPublisher.set(desiredModuleStates);
+        dummyPublisher.set(
+            new SwerveModuleState[]{
+                new SwerveModuleState(0.0, new Rotation2d(0)),
+                new SwerveModuleState(0.0, new Rotation2d(0)),
+                new SwerveModuleState(0.0, new Rotation2d(0)),
+                new SwerveModuleState(0.0, new Rotation2d(0))
+            }
+        );
 
         SmartDashboard.putNumberArray(
-            "StateSmartDashboard"
+            "RealStateSmartDashboard"
             , new double[]{
                 moudleStates[0].angle.getRadians(),
                 moudleStates[0].speedMetersPerSecond,
@@ -186,6 +201,34 @@ public class SwerveSubsystem extends SubsystemBase{
                 moudleStates[2].speedMetersPerSecond,
                 moudleStates[3].angle.getRadians(),
                 moudleStates[3].speedMetersPerSecond,
+            }
+        );
+
+        SmartDashboard.putNumberArray(
+            "DesiredStateSmartDashboard"
+            , new double[]{
+                desiredModuleStates[0].angle.getRadians(),
+                desiredModuleStates[0].speedMetersPerSecond,
+                desiredModuleStates[1].angle.getRadians(),
+                desiredModuleStates[1].speedMetersPerSecond,
+                desiredModuleStates[2].angle.getRadians(),
+                desiredModuleStates[2].speedMetersPerSecond,
+                desiredModuleStates[3].angle.getRadians(),
+                desiredModuleStates[3].speedMetersPerSecond,
+            }
+        );
+
+        SmartDashboard.putNumberArray(
+            "StateDummy",
+            new double[]{
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
             }
         );
         
@@ -228,6 +271,7 @@ public class SwerveSubsystem extends SubsystemBase{
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
+        desiredModuleStates = desiredStates;
         frontLeft.setDesiredState(desiredStates[0], true);
         frontRight.setDesiredState(desiredStates[1], true);
         backLeft.setDesiredState(desiredStates[2], true);
