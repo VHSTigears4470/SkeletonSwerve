@@ -47,7 +47,8 @@ public class SwerveModule {
      */
     public SwerveModule(
         int driveMotorId, int turnMotorId, boolean driveMotorReversed, boolean turnMotorReversed, 
-        int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed) {
+        int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed,
+        double pTurn, double iTurn, double dTurn) {
         this.absoluteEncoderReversed = absoluteEncoderReversed;
         absoluteEncoderOffsetRad = absoluteEncoderOffset;
         absoluteEncoder = new CANcoder(absoluteEncoderId);
@@ -70,7 +71,7 @@ public class SwerveModule {
         driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.FEEDFORWARD_S_DRIVE, ModuleConstants.FEEDFORWARD_V_DRIVE, ModuleConstants.FEEDFORWARD_A_DRIVE);
         drivePidController = new PIDController(ModuleConstants.P_DRIVE, ModuleConstants.I_DRIVE, ModuleConstants.D_DRIVE);
 
-        turnPidController = new PIDController(ModuleConstants.P_TURN, ModuleConstants.I_TURN, ModuleConstants.D_TURN);
+        turnPidController = new PIDController(pTurn, iTurn, dTurn);
         turnPidController.enableContinuousInput(-Math.PI, Math.PI);
 
         this.absoluteEncoderId = absoluteEncoderId;

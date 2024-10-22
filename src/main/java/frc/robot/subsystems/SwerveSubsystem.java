@@ -29,7 +29,10 @@ public class SwerveSubsystem extends SubsystemBase{
             DriveConstants.FRONT_LEFT_TURNING_ENCODER_REVERSED,
             DriveConstants.FRONT_LEFT_DRIVE_ABSOLUTE_ENCODER_PORT,
             DriveConstants.FRONT_LEFT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS,
-            DriveConstants.FRONT_LEFT_DRIVE_ABSOLUTE_ENCODER_REVERSED);
+            DriveConstants.FRONT_LEFT_DRIVE_ABSOLUTE_ENCODER_REVERSED,
+            DriveConstants.P_FRONT_LEFT_TURNING,
+            DriveConstants.I_FRONT_LEFT_TURNING,
+            DriveConstants.D_FRONT_LEFT_TURNING);
 
     private final SwerveModule frontRight = new SwerveModule(
             DriveConstants.FRONT_RIGHT_DRIVE_MOTOR_PORT,
@@ -38,7 +41,10 @@ public class SwerveSubsystem extends SubsystemBase{
             DriveConstants.FRONT_RIGHT_TURNING_ENCODER_REVERSED,
             DriveConstants.FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_PORT,
             DriveConstants.FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS,
-            DriveConstants.FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_REVERSED);
+            DriveConstants.FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_REVERSED,
+            DriveConstants.P_FRONT_RIGHT_TURNING,
+            DriveConstants.I_FRONT_RIGHT_TURNING,
+            DriveConstants.D_FRONT_RIGHT_TURNING);
 
     private final SwerveModule backLeft = new SwerveModule(
             DriveConstants.BACK_LEFT_DRIVE_MOTOR_PORT,
@@ -47,7 +53,10 @@ public class SwerveSubsystem extends SubsystemBase{
             DriveConstants.BACK_LEFT_TURNING_ENCODER_REVERSED,
             DriveConstants.BACK_LEFT_DRIVE_ABSOLUTE_ENCODER_PORT,
             DriveConstants.BACK_LEFT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS,
-            DriveConstants.BACK_LEFT_DRIVE_ABSOLUTE_ENCODER_REVERSED);
+            DriveConstants.BACK_LEFT_DRIVE_ABSOLUTE_ENCODER_REVERSED,
+            DriveConstants.P_BACK_LEFT_TURNING,
+            DriveConstants.I_BACK_LEFT_TURNING,
+            DriveConstants.D_BACK_LEFT_TURNING);
 
     private final SwerveModule backRight = new SwerveModule(
             DriveConstants.BACK_RIGHT_DRIVE_MOTOR_PORT,
@@ -56,7 +65,10 @@ public class SwerveSubsystem extends SubsystemBase{
             DriveConstants.BACK_RIGHT_TURNING_ENCODER_REVERSED,
             DriveConstants.BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_PORT,
             DriveConstants.BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_OFFSET_RADIANS,
-            DriveConstants.BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_REVERSED);
+            DriveConstants.BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_REVERSED,
+            DriveConstants.P_BACK_RIGHT_TURNING,
+            DriveConstants.I_BACK_RIGHT_TURNING,
+            DriveConstants.D_BACK_RIGHT_TURNING);
     
     // Gyro
     private final AHRS gyro = new AHRS(SPI.Port.kMXP);
