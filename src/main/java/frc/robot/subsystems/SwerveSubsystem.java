@@ -193,56 +193,86 @@ public class SwerveSubsystem extends SubsystemBase{
         SwerveModuleState[] moudleStates = getSwerveModuleState();
         realStatesPublisher.set(moudleStates);
         desiredStatesPublisher.set(desiredModuleStates);
-        dummyPublisher.set(
-            new SwerveModuleState[]{
-                new SwerveModuleState(0.0, new Rotation2d(0)),
-                new SwerveModuleState(0.0, new Rotation2d(0)),
-                new SwerveModuleState(0.0, new Rotation2d(0)),
-                new SwerveModuleState(0.0, new Rotation2d(0))
-            }
-        );
+        int preset = 0;
+        if(preset == 0) {
+            dummyPublisher.set(
+                new SwerveModuleState[]{
+                    new SwerveModuleState(0.0, new Rotation2d(0)),
+                    new SwerveModuleState(0.0, new Rotation2d(0)),
+                    new SwerveModuleState(0.0, new Rotation2d(0)),
+                    new SwerveModuleState(0.0, new Rotation2d(0))
+                }
+            );
+            SmartDashboard.putNumberArray(
+                "RealStateSmartDashboard"
+                , new double[]{
+                    moudleStates[0].angle.getRadians(),
+                    moudleStates[0].speedMetersPerSecond,
+                    moudleStates[1].angle.getRadians(),
+                    moudleStates[1].speedMetersPerSecond,
+                    moudleStates[2].angle.getRadians(),
+                    moudleStates[2].speedMetersPerSecond,
+                    moudleStates[3].angle.getRadians(),
+                    moudleStates[3].speedMetersPerSecond,
+                }
+            );
 
-        SmartDashboard.putNumberArray(
-            "RealStateSmartDashboard"
-            , new double[]{
-                moudleStates[0].angle.getRadians(),
-                moudleStates[0].speedMetersPerSecond,
-                moudleStates[1].angle.getRadians(),
-                moudleStates[1].speedMetersPerSecond,
-                moudleStates[2].angle.getRadians(),
-                moudleStates[2].speedMetersPerSecond,
-                moudleStates[3].angle.getRadians(),
-                moudleStates[3].speedMetersPerSecond,
-            }
-        );
+            SmartDashboard.putNumberArray(
+                "DesiredStateSmartDashboard"
+                , new double[]{
+                    desiredModuleStates[0].angle.getRadians(),
+                    desiredModuleStates[0].speedMetersPerSecond,
+                    desiredModuleStates[1].angle.getRadians(),
+                    desiredModuleStates[1].speedMetersPerSecond,
+                    desiredModuleStates[2].angle.getRadians(),
+                    desiredModuleStates[2].speedMetersPerSecond,
+                    desiredModuleStates[3].angle.getRadians(),
+                    desiredModuleStates[3].speedMetersPerSecond,
+                }
+            );
 
-        SmartDashboard.putNumberArray(
-            "DesiredStateSmartDashboard"
-            , new double[]{
-                desiredModuleStates[0].angle.getRadians(),
-                desiredModuleStates[0].speedMetersPerSecond,
-                desiredModuleStates[1].angle.getRadians(),
-                desiredModuleStates[1].speedMetersPerSecond,
-                desiredModuleStates[2].angle.getRadians(),
-                desiredModuleStates[2].speedMetersPerSecond,
-                desiredModuleStates[3].angle.getRadians(),
-                desiredModuleStates[3].speedMetersPerSecond,
-            }
-        );
+            SmartDashboard.putNumberArray(
+                "StateDummy",
+                new double[]{
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                }
+            );
+        } else if(preset == 1) {
+            SmartDashboard.putNumberArray(
+                "RealStateSmartDashboard"
+                , new double[]{
+                    moudleStates[0].angle.getRadians(),
+                    5,
+                    moudleStates[1].angle.getRadians(),
+                    5,
+                    moudleStates[2].angle.getRadians(),
+                    5,
+                    moudleStates[3].angle.getRadians(),
+                    5,
+                }
+            );
 
-        SmartDashboard.putNumberArray(
-            "StateDummy",
-            new double[]{
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-            }
-        );
+            SmartDashboard.putNumberArray(
+                "DesiredStateSmartDashboard"
+                , new double[]{
+                    desiredModuleStates[0].angle.getRadians(),
+                    4,
+                    desiredModuleStates[1].angle.getRadians(),
+                    4,
+                    desiredModuleStates[2].angle.getRadians(),
+                    4,
+                    desiredModuleStates[3].angle.getRadians(),
+                    4,
+                }
+            );
+        }
         
         // SmartDashboard.putNumberArray(
         //     "StatesCopy", 
