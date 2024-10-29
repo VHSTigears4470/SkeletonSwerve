@@ -35,6 +35,8 @@ public class SwerveModule {
     private final int turnMotorId;
     private final int driveMotorId;
 
+    private double STATIC;
+
     /**
      * Initializes a SwerveModule for the SwerveSubsystem
      * @param driveMotorID Drive Motor's ID
@@ -48,7 +50,7 @@ public class SwerveModule {
     public SwerveModule(
         int driveMotorId, int turnMotorId, boolean driveMotorReversed, boolean turnMotorReversed, 
         int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed,
-        double pTurn, double iTurn, double dTurn) {
+        double pTurn, double iTurn, double dTurn, double staticTurn) {
         this.absoluteEncoderReversed = absoluteEncoderReversed;
         absoluteEncoderOffsetRad = absoluteEncoderOffset;
         absoluteEncoder = new CANcoder(absoluteEncoderId);
@@ -80,6 +82,8 @@ public class SwerveModule {
         // To Modify Values on Smartdashboard for PID, use the go to Test instead of TeleOperated
         SmartDashboard.putData("Swerve[" + turnMotorId + "] PID", turnPidController);
         SmartDashboard.putData("Swerve[" + driveMotorId + "] PID", drivePidController);
+        STATIC = staticTurn;
+        SmartDashboard.putNumber(turnMotorId + " STATIC", STATIC);
         resetEncoders();
     }
 
@@ -174,11 +178,15 @@ public class SwerveModule {
         } else {
             driveMotor.set(state.speedMetersPerSecond / DriveConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
         }
-        turnMotor.set(turnPidController.calculate(getTurnPosition(), state.angle.getRadians()));
+        // turnMotor.set(turnPidController.calculate(getTurnPosition(), state.angle.getRadians()) + STATIC);
+        turnMotor.setVoltage(turnPidController.calculate(getTurnPosition(), state.angle.getRadians()) + STATIC);
         // SmartDashboard.putString("Swerve[" + absoluteEncoderId + "] state", state.toString());
         // SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] absolute encoder", getAbsoluteEncoderRad());
         SmartDashboard.putNumber("Swerve[" + driveMotorId + "] driver encoder", driveEncoder.getPosition());
         SmartDashboard.putNumber("Swerve[" + turnMotorId + "] turn encoder", turnEncoder.getPosition());
+        STATIC = SmartDashboard.getNumber(turnMotorId + " STATIC", 0);
+        SmartDashboard.putNumber(turnMotorId + " STATIC", STATIC);
+        STATIC = SmartDashboard.getNumber(turnMotorId + " STATIC", 0);
     }
 
     /**
@@ -186,8 +194,11 @@ public class SwerveModule {
      * @param forward should motor rotate "forwards" or "backwards"
      */
     public void testTurnMotors(double position) {
-        turnMotor.set(turnPidController.calculate(getTurnPosition(), position));
+        turnMotor.setVoltage(turnPidController.calculate(getTurnPosition(), position) + STATIC);
         SmartDashboard.putNumber("Swerve[" + turnMotorId + "] turn encoder", turnEncoder.getPosition());
+        STATIC = SmartDashboard.getNumber(turnMotorId + " STATIC", 0);
+        SmartDashboard.putNumber(turnMotorId + " STATIC", STATIC);
+        STATIC = SmartDashboard.getNumber(turnMotorId + " STATIC", 0);
     }
 
 

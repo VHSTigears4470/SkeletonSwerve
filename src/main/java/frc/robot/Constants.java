@@ -70,10 +70,10 @@ public final class Constants {
     public static final int FRONT_RIGHT_DRIVE_MOTOR_PORT = 6; // Check 6 
     public static final int BACK_RIGHT_DRIVE_MOTOR_PORT = 8; // Check 8
 
-    public static final int BACK_LEFT_TURNING_MOTOR_PORT = 1; // Right // 0.22 // 0.28
-    public static final int FRONT_LEFT_TURNING_MOTOR_PORT = 3; // Right // 0.20 // 0.267
-    public static final int FRONT_RIGHT_TURNING_MOTOR_PORT = 5; // Right // 0.22 // 0.36
-    public static final int BACK_RIGHT_TURNING_MOTOR_PORT = 7; // Right // 0.225 // 0.366
+    public static final int BACK_LEFT_TURNING_MOTOR_PORT = 1; // Right // 0.22 // 0.28, 0.4
+    public static final int FRONT_LEFT_TURNING_MOTOR_PORT = 3; // Right // 0.20 // 0.267, 0.45
+    public static final int FRONT_RIGHT_TURNING_MOTOR_PORT = 5; // Right // 0.22 // 0.36, 0.45
+    public static final int BACK_RIGHT_TURNING_MOTOR_PORT = 7; // Right // 0.225 // 0.366, 0.38
 
     public static final double P_BACK_LEFT_TURNING = 0.28;
     public static final double P_FRONT_LEFT_TURNING = 0.267;
@@ -89,6 +89,11 @@ public final class Constants {
     public static final double D_FRONT_LEFT_TURNING = 0;
     public static final double D_FRONT_RIGHT_TURNING = 0;
     public static final double D_BACK_RIGHT_TURNING = 0;
+
+    public static final double STATIC_BACK_LEFT_TURNING = 0.4;
+    public static final double STATIC_FRONT_LEFT_TURNING = 0.45;
+    public static final double STATIC_FRONT_RIGHT_TURNING = 0.45;
+    public static final double STATIC_BACK_RIGHT_TURNING = 0.38;
 
     public static final boolean BACK_LEFT_TURNING_ENCODER_REVERSED = !false; // Check
     public static final boolean FRONT_LEFT_TURNING_ENCODER_REVERSED = !false; // Check

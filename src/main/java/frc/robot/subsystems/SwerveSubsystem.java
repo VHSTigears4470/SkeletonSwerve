@@ -32,7 +32,8 @@ public class SwerveSubsystem extends SubsystemBase{
             DriveConstants.FRONT_LEFT_DRIVE_ABSOLUTE_ENCODER_REVERSED,
             DriveConstants.P_FRONT_LEFT_TURNING,
             DriveConstants.I_FRONT_LEFT_TURNING,
-            DriveConstants.D_FRONT_LEFT_TURNING);
+            DriveConstants.D_FRONT_LEFT_TURNING,
+            DriveConstants.STATIC_FRONT_LEFT_TURNING);
 
     private final SwerveModule frontRight = new SwerveModule(
             DriveConstants.FRONT_RIGHT_DRIVE_MOTOR_PORT,
@@ -44,7 +45,8 @@ public class SwerveSubsystem extends SubsystemBase{
             DriveConstants.FRONT_RIGHT_DRIVE_ABSOLUTE_ENCODER_REVERSED,
             DriveConstants.P_FRONT_RIGHT_TURNING,
             DriveConstants.I_FRONT_RIGHT_TURNING,
-            DriveConstants.D_FRONT_RIGHT_TURNING);
+            DriveConstants.D_FRONT_RIGHT_TURNING,
+            DriveConstants.STATIC_FRONT_RIGHT_TURNING);
 
     private final SwerveModule backLeft = new SwerveModule(
             DriveConstants.BACK_LEFT_DRIVE_MOTOR_PORT,
@@ -56,7 +58,8 @@ public class SwerveSubsystem extends SubsystemBase{
             DriveConstants.BACK_LEFT_DRIVE_ABSOLUTE_ENCODER_REVERSED,
             DriveConstants.P_BACK_LEFT_TURNING,
             DriveConstants.I_BACK_LEFT_TURNING,
-            DriveConstants.D_BACK_LEFT_TURNING);
+            DriveConstants.D_BACK_LEFT_TURNING,
+            DriveConstants.STATIC_BACK_LEFT_TURNING);
 
     private final SwerveModule backRight = new SwerveModule(
             DriveConstants.BACK_RIGHT_DRIVE_MOTOR_PORT,
@@ -68,7 +71,8 @@ public class SwerveSubsystem extends SubsystemBase{
             DriveConstants.BACK_RIGHT_DRIVE_ABSOLUTE_ENCODER_REVERSED,
             DriveConstants.P_BACK_RIGHT_TURNING,
             DriveConstants.I_BACK_RIGHT_TURNING,
-            DriveConstants.D_BACK_RIGHT_TURNING);
+            DriveConstants.D_BACK_RIGHT_TURNING,
+            DriveConstants.STATIC_BACK_RIGHT_TURNING);
     
     // Gyro
     private final AHRS gyro = new AHRS(SPI.Port.kMXP);
@@ -193,8 +197,6 @@ public class SwerveSubsystem extends SubsystemBase{
         SwerveModuleState[] moudleStates = getSwerveModuleState();
         realStatesPublisher.set(moudleStates);
         desiredStatesPublisher.set(desiredModuleStates);
-        int preset = 0;
-        if(preset == 0) {
             dummyPublisher.set(
                 new SwerveModuleState[]{
                     new SwerveModuleState(0.0, new Rotation2d(0)),
@@ -244,9 +246,8 @@ public class SwerveSubsystem extends SubsystemBase{
                     0
                 }
             );
-        } else if(preset == 1) {
             SmartDashboard.putNumberArray(
-                "RealStateSmartDashboard"
+                "DebuggingRealStateSmartDashboard"
                 , new double[]{
                     moudleStates[0].angle.getRadians(),
                     5,
@@ -260,7 +261,7 @@ public class SwerveSubsystem extends SubsystemBase{
             );
 
             SmartDashboard.putNumberArray(
-                "DesiredStateSmartDashboard"
+                "DebuggingDesiredStateSmartDashboard"
                 , new double[]{
                     desiredModuleStates[0].angle.getRadians(),
                     4,
@@ -272,7 +273,6 @@ public class SwerveSubsystem extends SubsystemBase{
                     4,
                 }
             );
-        }
         
         // SmartDashboard.putNumberArray(
         //     "StatesCopy", 
