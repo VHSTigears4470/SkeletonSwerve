@@ -85,15 +85,15 @@ public final class Constants {
     public static final double I_FRONT_RIGHT_TURNING = 0;
     public static final double I_BACK_RIGHT_TURNING = 0;
 
-    public static final double D_BACK_LEFT_TURNING = 0;
-    public static final double D_FRONT_LEFT_TURNING = 0;
-    public static final double D_FRONT_RIGHT_TURNING = 0;
-    public static final double D_BACK_RIGHT_TURNING = 0;
+    public static final double D_BACK_LEFT_TURNING = 0.22;
+    public static final double D_FRONT_LEFT_TURNING = 0.20;
+    public static final double D_FRONT_RIGHT_TURNING = 0.22;
+    public static final double D_BACK_RIGHT_TURNING = 0.225;
 
-    public static final double STATIC_BACK_LEFT_TURNING = 0.4;
-    public static final double STATIC_FRONT_LEFT_TURNING = 0.45;
-    public static final double STATIC_FRONT_RIGHT_TURNING = 0.45;
-    public static final double STATIC_BACK_RIGHT_TURNING = 0.38;
+    public static final double STATIC_BACK_LEFT_TURNING = 0;//0.4;
+    public static final double STATIC_FRONT_LEFT_TURNING = 0;//0.45;
+    public static final double STATIC_FRONT_RIGHT_TURNING = 0;//0.45;
+    public static final double STATIC_BACK_RIGHT_TURNING = 0;//0.38;
 
     public static final boolean BACK_LEFT_TURNING_ENCODER_REVERSED = !false; // Check
     public static final boolean FRONT_LEFT_TURNING_ENCODER_REVERSED = !false; // Check

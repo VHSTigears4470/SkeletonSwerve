@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -331,6 +332,14 @@ public class SwerveSubsystem extends SubsystemBase{
         frontRight.testTurnMotors(wheelPos[1].getAsDouble() + val);
         backLeft.testTurnMotors(wheelPos[2].getAsDouble() + val);
         backRight.testTurnMotors(wheelPos[3].getAsDouble() + val);
+        // desiredModuleStates
+        desiredModuleStates = new SwerveModuleState[]{
+            new SwerveModuleState(5, new Rotation2d(wheelPos[0].getAsDouble() + val)),
+            new SwerveModuleState(5, new Rotation2d(wheelPos[1].getAsDouble() + val)),
+            new SwerveModuleState(5, new Rotation2d(wheelPos[2].getAsDouble() + val)),
+            new SwerveModuleState(5, new Rotation2d(wheelPos[3].getAsDouble() + val))
+        };
+                
     }
 
     public DoubleSupplier[] getWheelRotationSupplier() {
