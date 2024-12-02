@@ -174,7 +174,6 @@ public class SwerveSubsystem extends SubsystemBase{
     }
 
     public SwerveModulePosition[] getSwerveModulePosistion() {
-        // return new SwerveModulePosition[]{frontRight.getPosition(), frontLeft.getPosition(), backRight.getPosition(), backLeft.getPosition()};
         return new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     }
 
@@ -194,108 +193,78 @@ public class SwerveSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Robot Heading", gyro.getRoll());
         SmartDashboard.putNumber("Yaw", gyro.getYaw());
         SmartDashboard.putNumber("Pitch", gyro.getPitch());
-
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+        
+        // Tools for advantage scope
         SwerveModuleState[] moudleStates = getSwerveModuleState();
         realStatesPublisher.set(moudleStates);
         desiredStatesPublisher.set(desiredModuleStates);
-            dummyPublisher.set(
-                new SwerveModuleState[]{
-                    new SwerveModuleState(0.0, new Rotation2d(0)),
-                    new SwerveModuleState(0.0, new Rotation2d(0)),
-                    new SwerveModuleState(0.0, new Rotation2d(0)),
-                    new SwerveModuleState(0.0, new Rotation2d(0))
-                }
-            );
-            SmartDashboard.putNumberArray(
-                "RealStateSmartDashboard"
-                , new double[]{
-                    moudleStates[0].angle.getRadians(),
-                    moudleStates[0].speedMetersPerSecond,
-                    moudleStates[1].angle.getRadians(),
-                    moudleStates[1].speedMetersPerSecond,
-                    moudleStates[2].angle.getRadians(),
-                    moudleStates[2].speedMetersPerSecond,
-                    moudleStates[3].angle.getRadians(),
-                    moudleStates[3].speedMetersPerSecond,
-                }
-            );
-
-            SmartDashboard.putNumberArray(
-                "DesiredStateSmartDashboard"
-                , new double[]{
-                    desiredModuleStates[0].angle.getRadians(),
-                    desiredModuleStates[0].speedMetersPerSecond,
-                    desiredModuleStates[1].angle.getRadians(),
-                    desiredModuleStates[1].speedMetersPerSecond,
-                    desiredModuleStates[2].angle.getRadians(),
-                    desiredModuleStates[2].speedMetersPerSecond,
-                    desiredModuleStates[3].angle.getRadians(),
-                    desiredModuleStates[3].speedMetersPerSecond,
-                }
-            );
-
-            SmartDashboard.putNumberArray(
-                "StateDummy",
-                new double[]{
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
-                }
-            );
-            SmartDashboard.putNumberArray(
-                "DebuggingRealStateSmartDashboard"
-                , new double[]{
-                    moudleStates[0].angle.getRadians(),
-                    5,
-                    moudleStates[1].angle.getRadians(),
-                    5,
-                    moudleStates[2].angle.getRadians(),
-                    5,
-                    moudleStates[3].angle.getRadians(),
-                    5,
-                }
-            );
-
-            SmartDashboard.putNumberArray(
-                "DebuggingDesiredStateSmartDashboard"
-                , new double[]{
-                    desiredModuleStates[0].angle.getRadians(),
-                    4,
-                    desiredModuleStates[1].angle.getRadians(),
-                    4,
-                    desiredModuleStates[2].angle.getRadians(),
-                    4,
-                    desiredModuleStates[3].angle.getRadians(),
-                    4,
-                }
-            );
         
-        System.out.print("fr = ");
-        System.out.printf("0.5%d", frontRight.getDriveVelocity());
-        System.out.print(" : ");
-        System.out.printf("0.5%d", frontRight.getDesiredSwerveModuleState().speedMetersPerSecond);
-        System.out.println();
-        System.out.print("br = ");
-        System.out.printf("0.5%d", backRight.getDriveVelocity());
-        System.out.print(" : ");
-        System.out.printf("0.5%d", backRight.getDesiredSwerveModuleState().speedMetersPerSecond);
-        System.out.println();
-        System.out.print("fl = ");
-        System.out.printf("0.5%d", frontLeft.getDriveVelocity());
-        System.out.print(" : ");
-        System.out.printf("0.5%d", frontLeft.getDesiredSwerveModuleState().speedMetersPerSecond);
-        System.out.println();
-        System.out.print("bl = ");
-        System.out.printf("0.5%d", backLeft.getDriveVelocity());
-        System.out.print(" : ");
-        System.out.printf("0.5%d", backLeft.getDesiredSwerveModuleState().speedMetersPerSecond);
-        System.out.println();
+        // Real Values of Robot
+        SmartDashboard.putNumberArray(
+            "RealState"
+            , new double[]{
+                moudleStates[0].angle.getRadians(),
+                moudleStates[0].speedMetersPerSecond,
+                moudleStates[1].angle.getRadians(),
+                moudleStates[1].speedMetersPerSecond,
+                moudleStates[2].angle.getRadians(),
+                moudleStates[2].speedMetersPerSecond,
+                moudleStates[3].angle.getRadians(),
+                moudleStates[3].speedMetersPerSecond,
+            }
+        );
+
+        // Inputted Values of Robot
+        SmartDashboard.putNumberArray(
+            "DesiredState"
+            , new double[]{
+                desiredModuleStates[0].angle.getRadians(),
+                desiredModuleStates[0].speedMetersPerSecond,
+                desiredModuleStates[1].angle.getRadians(),
+                desiredModuleStates[1].speedMetersPerSecond,
+                desiredModuleStates[2].angle.getRadians(),
+                desiredModuleStates[2].speedMetersPerSecond,
+                desiredModuleStates[3].angle.getRadians(),
+                desiredModuleStates[3].speedMetersPerSecond,
+            }
+        );
+
+        // Real Turning Values But Fake Speed
+        SmartDashboard.putNumberArray(
+            "RealStateFakeSpeed"
+            , new double[]{
+                moudleStates[0].angle.getRadians(),
+                5,
+                moudleStates[1].angle.getRadians(),
+                5,
+                moudleStates[2].angle.getRadians(),
+                5,
+                moudleStates[3].angle.getRadians(),
+                5,
+            }
+        );
+
+        // Desired Turning Value But Fake SPeed
+        SmartDashboard.putNumberArray(
+            "DesiredStateFakeSpeed"
+            , new double[]{
+                desiredModuleStates[0].angle.getRadians(),
+                4,
+                desiredModuleStates[1].angle.getRadians(),
+                4,
+                desiredModuleStates[2].angle.getRadians(),
+                4,
+                desiredModuleStates[3].angle.getRadians(),
+                4,
+            }
+        );
+        
+        // Updates Wheel Values
+        frontRight.updateSmartDashboard();
+        frontLeft.updateSmartDashboard();
+        backRight.updateSmartDashboard();
+        backLeft.updateSmartDashboard();
     }
 
     /**
@@ -340,7 +309,6 @@ public class SwerveSubsystem extends SubsystemBase{
     }
 
     public void testTurnMotors(DoubleSupplier[] wheelPos, boolean forward) {
-        double pos;
         double val = 10;
         if(forward)
             val *= 1;
