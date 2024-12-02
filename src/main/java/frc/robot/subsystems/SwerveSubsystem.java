@@ -177,6 +177,7 @@ public class SwerveSubsystem extends SubsystemBase{
         // return new SwerveModulePosition[]{frontRight.getPosition(), frontLeft.getPosition(), backRight.getPosition(), backLeft.getPosition()};
         return new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
     }
+
     public SwerveModuleState[] getSwerveModuleState() {
         return new SwerveModuleState[] {
             frontLeft.getState(), 
@@ -275,9 +276,26 @@ public class SwerveSubsystem extends SubsystemBase{
                 }
             );
         
-        // SmartDashboard.putNumberArray(
-        //     "StatesCopy", 
-        // );
+        System.out.print("fr = ");
+        System.out.printf("0.5%d", frontRight.getDriveVelocity());
+        System.out.print(" : ");
+        System.out.printf("0.5%d", frontRight.getDesiredSwerveModuleState().speedMetersPerSecond);
+        System.out.println();
+        System.out.print("br = ");
+        System.out.printf("0.5%d", backRight.getDriveVelocity());
+        System.out.print(" : ");
+        System.out.printf("0.5%d", backRight.getDesiredSwerveModuleState().speedMetersPerSecond);
+        System.out.println();
+        System.out.print("fl = ");
+        System.out.printf("0.5%d", frontLeft.getDriveVelocity());
+        System.out.print(" : ");
+        System.out.printf("0.5%d", frontLeft.getDesiredSwerveModuleState().speedMetersPerSecond);
+        System.out.println();
+        System.out.print("bl = ");
+        System.out.printf("0.5%d", backLeft.getDriveVelocity());
+        System.out.print(" : ");
+        System.out.printf("0.5%d", backLeft.getDesiredSwerveModuleState().speedMetersPerSecond);
+        System.out.println();
     }
 
     /**

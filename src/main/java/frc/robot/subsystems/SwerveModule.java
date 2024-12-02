@@ -18,14 +18,18 @@ public class SwerveModule {
     // Motors
     private final CANSparkMax driveMotor;
     private final CANSparkMax turnMotor;
+
     // Encoders
     private final RelativeEncoder driveEncoder;
     private final RelativeEncoder turnEncoder;
+
     // Feedfowrad
     private final SimpleMotorFeedforward driveFeedforward;
+
     // PID
     private final PIDController turnPidController;
     private final PIDController drivePidController;
+
     // Absolute Encoder with Settings
     private final CANcoder absoluteEncoder;
     private final boolean absoluteEncoderReversed;
@@ -36,6 +40,8 @@ public class SwerveModule {
     private final int driveMotorId;
 
     private double STATIC;
+
+    private SwerveModuleState desiredState;
 
     /**
      * Initializes a SwerveModule for the SwerveSubsystem
@@ -119,6 +125,10 @@ public class SwerveModule {
         return driveEncoder.getVelocity();
     }
 
+    public SwerveModuleState getDesiredSwerveModuleState() {
+        return desiredState;
+    }
+
     /**
      * Gets the absolute encoder value in radians with offset included
      * @return double of the absolute encoder with offset in radians
@@ -178,10 +188,9 @@ public class SwerveModule {
         } else {
             driveMotor.set(state.speedMetersPerSecond / DriveConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
         }
-        // turnMotor.set(turnPidController.calculate(getTurnPosition(), state.angle.getRadians()) + STATIC);
         turnMotor.setVoltage(turnPidController.calculate(getTurnPosition(), state.angle.getRadians()) + STATIC);
-        // SmartDashboard.putString("Swerve[" + absoluteEncoderId + "] state", state.toString());
-        // SmartDashboard.putNumber("Swerve[" + absoluteEncoderId + "] absolute encoder", getAbsoluteEncoderRad());
+        
+        desiredState = state;
         SmartDashboard.putNumber("Swerve[" + driveMotorId + "] driver encoder", driveEncoder.getPosition());
         SmartDashboard.putNumber("Swerve[" + turnMotorId + "] turn encoder", turnEncoder.getPosition());
         STATIC = SmartDashboard.getNumber(turnMotorId + " STATIC", 0);
