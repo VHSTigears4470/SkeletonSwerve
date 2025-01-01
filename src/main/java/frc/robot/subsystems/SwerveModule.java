@@ -1,18 +1,24 @@
 package frc.robot.subsystems;
 
+// Imports
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
+
+import com.ctre.phoenix6.hardware.CANcoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.ModuleConstants;
-import com.ctre.phoenix6.hardware.CANcoder;
+
+import frc.robot.Constants.SwerveDriveConstants;
+import frc.robot.Constants.SwervePhysicalConstants;
+import frc.robot.Constants.SwervePhysicalConstants.MotorLocation;
+
+
 
 public class SwerveModule {
     // Motors
@@ -23,40 +29,49 @@ public class SwerveModule {
     private final RelativeEncoder driveEncoder;
     private final RelativeEncoder turnEncoder;
 
-    // Feedfowrad
+    // Feedforward
     private final SimpleMotorFeedforward driveFeedforward;
 
     // PID
     private final PIDController turnPidController;
     private final PIDController drivePidController;
+    private double staticTurn; // Static voltage for the turning wheel
 
-    // Absolute Encoder with Settings
+    // Absolute Encoder and their Settings
     private final CANcoder absoluteEncoder;
     private final boolean absoluteEncoderReversed;
     private final double absoluteEncoderOffsetRad;
 
+    // Motor Ids (used mostly for debugging)
     private final int absoluteEncoderId;
     private final int turnMotorId;
     private final int driveMotorId;
+    private final MotorLocation motorLocation;
 
-    private double STATIC;
-
+    // Desired state of wheel (used mostly for debugging)
     private SwerveModuleState desiredState;
 
     /**
      * Initializes a SwerveModule for the SwerveSubsystem
      * @param driveMotorID Drive Motor's ID
      * @param turnMotorId Turn Motor's ID
+     * @param absoluteEncoderId Absolute Motor's ID
      * @param driveMotorReversed If the drive motor is reversed
      * @param turnMotorReversed If the turn motor is reversed
-     * @param absoluteEncoderId Absolute Motor's ID
-     * @param absoluteEncoderOffset Offset of the absolute encoder to make the wheels "straight"
      * @param absoluteEncoderReversed If the encoder is reversed
+     * @param absoluteEncoderOffset Offset of the absolute encoder to make the wheels "straight"
+     * @param pTurn P value for PID of the turn wheel
+     * @param iTurn I value for PID of the turn wheel
+     * @param dTurn D value for PID of the turn wheel
+     * @param staticTurn Static voltage constantly applied to the turn wheel (helps overcome friction)
      */
     public SwerveModule(
-        int driveMotorId, int turnMotorId, boolean driveMotorReversed, boolean turnMotorReversed, 
-        int absoluteEncoderId, double absoluteEncoderOffset, boolean absoluteEncoderReversed,
-        double pTurn, double iTurn, double dTurn, double staticTurn) {
+        MotorLocation motorLocation, int driveMotorId, int turnMotorId, int absoluteEncoderId,
+        boolean driveMotorReversed, boolean turnMotorReversed, boolean absoluteEncoderReversed,
+        double absoluteEncoderOffset, double pTurn, double iTurn, double dTurn, double staticTurn) {
+        
+        // Init variables
+        this.motorLocation = motorLocation;
         this.absoluteEncoderReversed = absoluteEncoderReversed;
         absoluteEncoderOffsetRad = absoluteEncoderOffset;
         absoluteEncoder = new CANcoder(absoluteEncoderId);
@@ -70,14 +85,14 @@ public class SwerveModule {
         driveEncoder = driveMotor.getEncoder();
         turnEncoder = turnMotor.getEncoder();
 
-        driveEncoder.setPositionConversionFactor(ModuleConstants.DRIVE_ENCODER_ROTATION_TO_METER);
-        driveEncoder.setVelocityConversionFactor(ModuleConstants.DRIVE_ENCODER_RPM_TO_METER_PER_SECOND);
+        driveEncoder.setPositionConversionFactor(SwervePhysicalConstants.DRIVE_ENCODER_ROTATION_TO_METER);
+        driveEncoder.setVelocityConversionFactor(SwervePhysicalConstants.DRIVE_ENCODER_RPM_TO_METER_PER_SECOND);
         
-        turnEncoder.setPositionConversionFactor(ModuleConstants.TURN_ENCODER_ROTATION_TO_RADIANS);
-        turnEncoder.setVelocityConversionFactor(ModuleConstants.TURN_ENCODER_RPM_TO_METER_PER_SECOND);
+        turnEncoder.setPositionConversionFactor(SwervePhysicalConstants.TURN_ENCODER_ROTATION_TO_RADIANS);
+        turnEncoder.setVelocityConversionFactor(SwervePhysicalConstants.TURN_ENCODER_RPM_TO_METER_PER_SECOND);
 
-        driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.FEEDFORWARD_S_DRIVE, ModuleConstants.FEEDFORWARD_V_DRIVE, ModuleConstants.FEEDFORWARD_A_DRIVE);
-        drivePidController = new PIDController(ModuleConstants.P_DRIVE, ModuleConstants.I_DRIVE, ModuleConstants.D_DRIVE);
+        driveFeedforward = new SimpleMotorFeedforward(SwerveDriveConstants.FEEDFORWARD_S_DRIVE, SwerveDriveConstants.FEEDFORWARD_V_DRIVE, SwerveDriveConstants.FEEDFORWARD_A_DRIVE);
+        drivePidController = new PIDController(SwerveDriveConstants.P_DRIVE, SwerveDriveConstants.I_DRIVE, SwerveDriveConstants.D_DRIVE);
 
         turnPidController = new PIDController(pTurn, iTurn, dTurn);
         turnPidController.enableContinuousInput(-Math.PI, Math.PI);
@@ -88,53 +103,13 @@ public class SwerveModule {
         
         resetEncoders();
         
-        // PID Modification (Use Test instead of TeleOperated)
-        SmartDashboard.putData("Swerve[" + turnMotorId + "] PID", turnPidController);
-        SmartDashboard.putData("Swerve[" + driveMotorId + "] PID", drivePidController);
+        // Init Smartdashboard values used to modify PID controllers
+        SmartDashboard.putData(motorLocation + " turn PID", turnPidController);
+        SmartDashboard.putData(motorLocation + " drive PID", drivePidController);
 
-        // Static Modification
-        STATIC = staticTurn;
-        SmartDashboard.putNumber(turnMotorId + " STATIC", STATIC);
-    }
-
-    /**
-     * Gets the encoder position of the drive motor in meters
-     * @return double of the drive motor's encoder value convereted
-     */
-    public double getDrivePosition() {
-        return driveEncoder.getPosition();
-    }
-
-    /**
-     * Gets the encoder position of the turn motor in radians
-     * @return double of turn motor's encoder value converted
-     */
-    public double getTurnPosition() {
-        return turnEncoder.getPosition();
-    }
-
-    /**
-     * Gets this module's drive velocity in meters / second
-     * @return double of velocity of the drive module converted
-     */
-    public double getDriveVelocity() {
-        return driveEncoder.getVelocity();
-    }
-
-    /**
-     * Gets this module's turn velocity in meters / second
-     * @return double of velocity of the turn module converted
-     */
-    public double getTurnVelocity() {
-        return driveEncoder.getVelocity();
-    }
-
-    /**
-     * Gets this module's desired swerve module state
-     * @return last inputted desired swerve module state
-     */
-    public SwerveModuleState getDesiredSwerveModuleState() {
-        return desiredState;
+        // Init Smartdashboard values used to modify Static Turn
+        this.staticTurn = staticTurn;
+        SmartDashboard.putNumber(motorLocation + " STATIC", this.staticTurn);
     }
 
     /**
@@ -156,20 +131,27 @@ public class SwerveModule {
     }
 
     /**
-     * Sets the drive encoder to zero and syncs turn encoder to 
-     * the adjusted reading of the absolute encoder
+     * Gets this module's desired swerve module state
+     * @return last inputted desired swerve module state
      */
-    public void resetEncoders() {
-        driveEncoder.setPosition(0);
-        turnEncoder.setPosition(getAbsoluteEncoderRad());
+    public SwerveModuleState getDesiredSwerveModuleState() {
+        return desiredState;
     }
 
     /**
-     * Gets the speed and angle of this module
-     * @return SwerveModuleState of this moduel's drive and turn motor's position
+     * Gets the encoder position of the drive motor in meters
+     * @return double of the drive motor's encoder value convereted
      */
-    public SwerveModuleState getState() {
-        return new SwerveModuleState(DriveConstants.ROBOT_INVERT * getDriveVelocity(), new Rotation2d(getTurnPosition()));
+    public double getDrivePosition() {
+        return driveEncoder.getPosition();
+    }
+
+    /**
+     * Gets this module's drive velocity in meters / second
+     * @return double of velocity of the drive module converted
+     */
+    public double getDriveVelocity() {
+        return driveEncoder.getVelocity();
     }
 
     /**
@@ -177,46 +159,63 @@ public class SwerveModule {
      * @return SwereveModulePosition of this module's drive and turn motor's position
      */
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(DriveConstants.ROBOT_INVERT *getDrivePosition(), new Rotation2d(getTurnPosition()));
+        return new SwerveModulePosition(getDrivePosition(), new Rotation2d(getTurnPosition()));
+    }
+
+    /**
+     * Gets the speed and angle of this module
+     * @return SwerveModuleState of this moduel's drive and turn motor's position
+     */
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurnPosition()));
+    }
+
+    /**
+     * Gets the encoder position of the turn motor in radians
+     * @return double of turn motor's encoder value converted
+     */
+    public double getTurnPosition() {
+        return turnEncoder.getPosition();
+    }
+
+    /**
+     * Gets this module's turn velocity in meters / second
+     * @return double of velocity of the turn module converted
+     */
+    public double getTurnVelocity() {
+        return driveEncoder.getVelocity();
     }
 
     /**
      * Moves the module's turn and drive motors to the inputted state
      * @param state the SwereveModuleState this module should aim for
-     * @param noStillMovement true to prevent movement when no motion
+     * @param bypassStillMovement toggle on whether to prevent robot moving with very small inputs
      */
-    public void setDesiredState(SwerveModuleState state, boolean noStillMovement) {
-        // Prevents only turning motion without movement (helps prevents robot from shifting when still)
-        if(noStillMovement && Math.abs(state.speedMetersPerSecond) < 0.001) {
+    public void setDesiredState(SwerveModuleState state, boolean bypassStillMovement) {
+        // Prevents robot from shifting when still (mainly used to prevent robot from turning when the drive wheels are not moving)
+        if(bypassStillMovement && Math.abs(state.speedMetersPerSecond) < 0.001) {
             stop();
             return;
         }
 
-        // Finds best route to rotate module (90 degrees turns at max)
+        // Finds optimal direction to rotate module (90 degrees turns at max)
         state = SwerveModuleState.optimize(state, getState().angle);
         
         // Sets drive motor speeds
-        if(ModuleConstants.IS_USING_PID_DRIVE) {
+        if(SwerveDriveConstants.IS_USING_PID_DRIVE) {
+            // Calculates speed using PID
             driveMotor.set(driveFeedforward.calculate(state.speedMetersPerSecond) + drivePidController.calculate(state.speedMetersPerSecond));
         } else {
-            driveMotor.set(state.speedMetersPerSecond / DriveConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
+            // Calculates speed using max speed
+            driveMotor.set(state.speedMetersPerSecond / SwervePhysicalConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
         }
 
-        // Sets turn motor speeds
-        turnMotor.setVoltage(turnPidController.calculate(getTurnPosition(), state.angle.getRadians()) + STATIC);
+        // Sets turn motor speeds with PID and StaticTurn
+        turnMotor.setVoltage(turnPidController.calculate(getTurnPosition(), state.angle.getRadians()) + staticTurn);
         
         // Updates desired state
         desiredState = state;
     }
-
-    /**
-     * Keeps turning the motors by 90 degrees off current
-     * @param forward should motor rotate "forwards" or "backwards"
-     */
-    public void testTurnMotors(double position) {
-        turnMotor.setVoltage(turnPidController.calculate(getTurnPosition(), position) + STATIC);
-    }
-
 
     /**
      * Stops the drive and turn motor by setting their speed to 0
@@ -227,16 +226,45 @@ public class SwerveModule {
     }
 
     /**
-     * Puts new SmartDashboards values onto the board and intakes parameters 
+     * Sets the speed of the motor
+     * @param speed of motor in meters per second (m/s)
+     */
+    public void testDriveMotors(double speed) {
+        turnMotor.set(SwervePhysicalConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
+    }
+
+    /**
+     * Turns only the motor to a set angle
+     * @param position is where the turn wheel should be rotated (in radians)
+     */
+    public void testTurnMotors(double position) {
+        turnMotor.setVoltage(turnPidController.calculate(getTurnPosition(), position) + staticTurn);
+    }
+
+    /**
+     * Sets the drive encoder to zero 
+     * Syncs turn encoder with the absolute encoder
+     */
+    public void resetEncoders() {
+        driveEncoder.setPosition(0);
+        turnEncoder.setPosition(getAbsoluteEncoderRad());
+    }
+
+    /**
+     * Puts new SmartDashboards values onto the board and allows for modification of certain values
      */
     public void updateSmartDashboard() {
-        SmartDashboard.putNumber("Swerve[" + driveMotorId + "] driver encoder", driveEncoder.getPosition());
-        SmartDashboard.putNumber("Swerve[" + turnMotorId + "] turn encoder", turnEncoder.getPosition());
-        STATIC = SmartDashboard.getNumber(turnMotorId + " STATIC", 0);
-        SmartDashboard.putNumber(turnMotorId + " STATIC", STATIC);
-        STATIC = SmartDashboard.getNumber(turnMotorId + " STATIC", 0);
+        // Position of Drive and Turn Motors
+        SmartDashboard.putNumber(motorLocation + " driver encoder", driveEncoder.getPosition());
+        SmartDashboard.putNumber(motorLocation + " turn encoder", turnEncoder.getPosition());
+        
+        // To change static voltage applied to the turn motor
+        staticTurn = SmartDashboard.getNumber(motorLocation + " STATIC", 0);
+        SmartDashboard.putNumber(motorLocation + " STATIC", staticTurn);
+        staticTurn = SmartDashboard.getNumber(motorLocation + " STATIC", 0);
 
-        System.out.print(driveMotorId + " : curr = ");
+        // Prints both current and desired speeds of the drive wheels
+        System.out.printf("21%s", (motorLocation + " : curr = "));
         System.out.printf("0.5%d", getDriveVelocity());
         System.out.print(" : desired = ");
         System.out.printf("0.5%d", getDesiredSwerveModuleState().speedMetersPerSecond);
