@@ -21,7 +21,7 @@ import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Constants.SwervePhysicalConstants;
 import frc.robot.Constants.SwerveTurnConstants;
 
-public class SwerveSubsystem extends SubsystemBase{
+public class SwerveSubsystem extends SubsystemBase {
     // Swereve Modules
     private final SwerveModule frontLeft = new SwerveModule(
             SwervePhysicalConstants.MotorLocation.FRONT_LEFT,
@@ -78,49 +78,57 @@ public class SwerveSubsystem extends SubsystemBase{
             SwerveTurnConstants.I_BACK_RIGHT_TURN,
             SwerveTurnConstants.D_BACK_RIGHT_TURN,
             SwerveTurnConstants.STATIC_BACK_RIGHT_TURN);
-    
+
     // Gyro
     private final AHRS gyro = new AHRS(SPI.Port.kMXP);
 
     // Odometry
-    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(SwervePhysicalConstants.DRIVE_KINEMATICS, new Rotation2d(0), getSwerveModulePosistion());
-    
+    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(SwervePhysicalConstants.DRIVE_KINEMATICS,
+            new Rotation2d(0), getSwerveModulePosistion());
+
     // List of all desired module states
-    private SwerveModuleState[] desiredModuleStates; 
+    private SwerveModuleState[] desiredModuleStates;
 
     /**
      * Inits SwereveSubsystem
      */
     public SwerveSubsystem() {
         /*
-        AutoBuilder.configureHolonomic(
-            this::getPose,
-            this::resetOdometry,
-            this::getRobotRelativeSpeeds,
-            this::setModuleStates,
-            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(AutoConstants.P_X_CONTROLLER, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(AutoConstants.P_THETA_CONTROLLER, 0.0, 0.0), // Rotation PID constants
-                    AutoConstants.MAX_SPEED_METER_PER_SECOND, // Max module speed, in m/s
-                    DriveConstants.WHEEL_BASE/2, // Drive base radius in meters. Distance from robot center to furthest module.
-                    new ReplanningConfig() // Default path replanning config. See the API for the options here
-            ),
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this // Reference to this subsystem to set requirements
-        );
-        */
+         * AutoBuilder.configureHolonomic(
+         * this::getPose,
+         * this::resetOdometry,
+         * this::getRobotRelativeSpeeds,
+         * this::setModuleStates,
+         * new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should
+         * likely live in your Constants class
+         * new PIDConstants(AutoConstants.P_X_CONTROLLER, 0.0, 0.0), // Translation PID
+         * constants
+         * new PIDConstants(AutoConstants.P_THETA_CONTROLLER, 0.0, 0.0), // Rotation PID
+         * constants
+         * AutoConstants.MAX_SPEED_METER_PER_SECOND, // Max module speed, in m/s
+         * DriveConstants.WHEEL_BASE/2, // Drive base radius in meters. Distance from
+         * robot center to furthest module.
+         * new ReplanningConfig() // Default path replanning config. See the API for the
+         * options here
+         * ),
+         * () -> {
+         * // Boolean supplier that controls when the path will be mirrored for the red
+         * alliance
+         * // This will flip the path being followed to the red side of the field.
+         * // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+         * 
+         * var alliance = DriverStation.getAlliance();
+         * if (alliance.isPresent()) {
+         * return alliance.get() == DriverStation.Alliance.Red;
+         * }
+         * return false;
+         * },
+         * this // Reference to this subsystem to set requirements
+         * );
+         */
         // Inits module states
-        desiredModuleStates = new SwerveModuleState[]{new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()};
+        desiredModuleStates = new SwerveModuleState[] { new SwerveModuleState(), new SwerveModuleState(),
+                new SwerveModuleState(), new SwerveModuleState() };
         // Waits for gyro to boot up (takes around a second) then resets it heading
         new Thread(() -> {
             try {
@@ -134,7 +142,8 @@ public class SwerveSubsystem extends SubsystemBase{
     }
 
     /**
-     * Converts and returns the heading in the perfered ranges of -180 to 180 
+     * Converts and returns the heading in the perfered ranges of -180 to 180
+     * 
      * @return the heading based on WPILib's preference
      */
     public double getHeading() {
@@ -142,9 +151,9 @@ public class SwerveSubsystem extends SubsystemBase{
         return Math.IEEEremainder(gyro.getAngle(), 360);
     }
 
-
     /**
      * Returns pose of swereve in meters
+     * 
      * @return A Pose2d of the swereve in meters
      */
     public Pose2d getPose() {
@@ -153,22 +162,27 @@ public class SwerveSubsystem extends SubsystemBase{
 
     /**
      * Gets a list of Swerve Module Posistion
-     * @return A list of Swerve Module Positions from front left, front right, back left, and back right
+     * 
+     * @return A list of Swerve Module Positions from front left, front right, back
+     *         left, and back right
      */
     public SwerveModulePosition[] getSwerveModulePosistion() {
-        return new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+        return new SwerveModulePosition[] { frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(),
+                backRight.getPosition() };
     }
 
     /**
      * Gets a list of Swerve Module States
-     * @return A list of Swerve Module State from front left, front right, back left, back right
+     * 
+     * @return A list of Swerve Module State from front left, front right, back
+     *         left, back right
      */
     public SwerveModuleState[] getSwerveModuleState() {
         return new SwerveModuleState[] {
-            frontLeft.getState(), 
-            frontRight.getState(), 
-            backLeft.getState(), 
-            backRight.getState()
+                frontLeft.getState(),
+                frontRight.getState(),
+                backLeft.getState(),
+                backRight.getState()
         };
     }
 
@@ -178,6 +192,7 @@ public class SwerveSubsystem extends SubsystemBase{
 
     /**
      * Returns rotation in degrees
+     * 
      * @return A Rotation2d of the heading of the swerve in degrees
      */
     public Rotation2d getRotation2d() {
@@ -187,19 +202,21 @@ public class SwerveSubsystem extends SubsystemBase{
 
     /**
      * A list of the swerve module's latest turn angle
+     * 
      * @return A supplier of the wheels latest position
      */
     public DoubleSupplier[] getWheelRotationSupplier() {
-        return new DoubleSupplier[]{
-            () -> frontLeft.getTurnPosition(),
-            () -> frontRight.getTurnPosition(),
-            () -> backLeft.getTurnPosition(),
-            () -> backRight.getTurnPosition()
+        return new DoubleSupplier[] {
+                () -> frontLeft.getTurnPosition(),
+                () -> frontRight.getTurnPosition(),
+                () -> backLeft.getTurnPosition(),
+                () -> backRight.getTurnPosition()
         };
     }
 
     /**
      * Normalize and sets the desired state / speed of each wheels
+     * 
      * @param chassisSpeeds the ChassisSpeeds of the entire swerve
      */
     public void setModuleStates(ChassisSpeeds chassisSpeeds) {
@@ -207,13 +224,17 @@ public class SwerveSubsystem extends SubsystemBase{
     }
 
     /**
-     * Normalize and sets the desired state / speed of each wheels with wheel rotating only if there is movement
-     * @param desiredStates the SwereveModuleState list of each motor, 
-     * front left is index 0, front right is index 1, back left is index 2, 
-     * back right is index 3
+     * Normalize and sets the desired state / speed of each wheels with wheel
+     * rotating only if there is movement
+     * 
+     * @param desiredStates the SwereveModuleState list of each motor,
+     *                      front left is index 0, front right is index 1, back left
+     *                      is index 2,
+     *                      back right is index 3
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwervePhysicalConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates,
+                SwervePhysicalConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
         desiredModuleStates = desiredStates;
         frontLeft.setDesiredState(desiredStates[0], true);
         frontRight.setDesiredState(desiredStates[1], true);
@@ -223,13 +244,17 @@ public class SwerveSubsystem extends SubsystemBase{
 
     /**
      * Normalize and sets the desired state / speed of each wheels
-     * @param desiredStates the SwereveModuleState list of each motor, 
-     * front left is index 0, front right is index 1, back left is index 2, 
-     * back right is index 3
-     * @param noStillMovement true to prevent wheels from rotating when there is no motion to avoid robot shifting
+     * 
+     * @param desiredStates   the SwereveModuleState list of each motor,
+     *                        front left is index 0, front right is index 1, back
+     *                        left is index 2,
+     *                        back right is index 3
+     * @param noStillMovement true to prevent wheels from rotating when there is no
+     *                        motion to avoid robot shifting
      */
     public void setModuleStates(SwerveModuleState[] desiredStates, boolean noStillMovement) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwervePhysicalConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates,
+                SwervePhysicalConstants.PHYSICAL_MAX_SPEED_METER_PER_SECOND);
         frontLeft.setDesiredState(desiredStates[0], noStillMovement);
         frontRight.setDesiredState(desiredStates[1], noStillMovement);
         backLeft.setDesiredState(desiredStates[2], noStillMovement);
@@ -245,15 +270,16 @@ public class SwerveSubsystem extends SubsystemBase{
         backLeft.stop();
         backRight.stop();
     }
-    
+
     /**
      * A function designed to only drive the wheels
-     * @param speed Velocity (meters per second) to turn the wheels 
+     * 
+     * @param speed Velocity (meters per second) to turn the wheels
      */
-    public void testDriveMotors(double speed)
-    {
+    public void testDriveMotors(double speed) {
         // Limits speed to negative max speed to max speed inclusive
-        speed = Math.signum(speed) * Math.min(Math.abs(speed), SwervePhysicalConstants.PHYSICAL_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND);
+        speed = Math.signum(speed)
+                * Math.min(Math.abs(speed), SwervePhysicalConstants.PHYSICAL_MAX_ANGULAR_SPEED_RADIAN_PER_SECOND);
 
         // Sets speed
         frontLeft.testDriveMotors(speed);
@@ -262,16 +288,17 @@ public class SwerveSubsystem extends SubsystemBase{
         backRight.testDriveMotors(speed);
 
         // updates the speed
-         desiredModuleStates = new SwerveModuleState[]{
-            new SwerveModuleState(speed, new Rotation2d(frontLeft.getTurnPosition())),
-            new SwerveModuleState(speed, new Rotation2d(frontRight.getTurnPosition())),
-            new SwerveModuleState(speed, new Rotation2d(backLeft.getTurnPosition())),
-            new SwerveModuleState(speed, new Rotation2d(backRight.getTurnPosition()))
+        desiredModuleStates = new SwerveModuleState[] {
+                new SwerveModuleState(speed, new Rotation2d(frontLeft.getTurnPosition())),
+                new SwerveModuleState(speed, new Rotation2d(frontRight.getTurnPosition())),
+                new SwerveModuleState(speed, new Rotation2d(backLeft.getTurnPosition())),
+                new SwerveModuleState(speed, new Rotation2d(backRight.getTurnPosition()))
         };
     }
-    
+
     /**
      * A function designed to only turn the wheels
+     * 
      * @param pos Position to turn wheels to
      */
     public void testTurnMotors(double pos) {
@@ -281,17 +308,19 @@ public class SwerveSubsystem extends SubsystemBase{
         backRight.testTurnMotors(pos);
 
         // updates the rotation
-        desiredModuleStates = new SwerveModuleState[]{
-            new SwerveModuleState(frontLeft.getDriveVelocity(), new Rotation2d(frontLeft.getTurnPosition() + pos)),
-            new SwerveModuleState(frontRight.getDriveVelocity(), new Rotation2d(frontRight.getTurnPosition() + pos)),
-            new SwerveModuleState(backLeft.getDriveVelocity(), new Rotation2d(backLeft.getTurnPosition() + pos)),
-            new SwerveModuleState(backRight.getDriveVelocity(), new Rotation2d(backRight.getTurnPosition() + pos))
+        desiredModuleStates = new SwerveModuleState[] {
+                new SwerveModuleState(frontLeft.getDriveVelocity(), new Rotation2d(frontLeft.getTurnPosition() + pos)),
+                new SwerveModuleState(frontRight.getDriveVelocity(),
+                        new Rotation2d(frontRight.getTurnPosition() + pos)),
+                new SwerveModuleState(backLeft.getDriveVelocity(), new Rotation2d(backLeft.getTurnPosition() + pos)),
+                new SwerveModuleState(backRight.getDriveVelocity(), new Rotation2d(backRight.getTurnPosition() + pos))
         };
     }
-    
+
     /**
      * A function designed to continously turn the wheels
-     * @param wheelPos A supplier of what the newest wheel position is
+     * 
+     * @param wheelPos      A supplier of what the newest wheel position is
      * @param turnClockwise Whether the wheel should turn clockwise or not
      */
     public void testTurnMotors(DoubleSupplier[] wheelPos, boolean turnClockwise) {
@@ -303,18 +332,19 @@ public class SwerveSubsystem extends SubsystemBase{
         backRight.testTurnMotors(wheelPos[3].getAsDouble() + val);
 
         // updates the rotation
-        desiredModuleStates = new SwerveModuleState[]{
-            new SwerveModuleState(5, new Rotation2d(wheelPos[0].getAsDouble() + val)),
-            new SwerveModuleState(5, new Rotation2d(wheelPos[1].getAsDouble() + val)),
-            new SwerveModuleState(5, new Rotation2d(wheelPos[2].getAsDouble() + val)),
-            new SwerveModuleState(5, new Rotation2d(wheelPos[3].getAsDouble() + val))
+        desiredModuleStates = new SwerveModuleState[] {
+                new SwerveModuleState(5, new Rotation2d(wheelPos[0].getAsDouble() + val)),
+                new SwerveModuleState(5, new Rotation2d(wheelPos[1].getAsDouble() + val)),
+                new SwerveModuleState(5, new Rotation2d(wheelPos[2].getAsDouble() + val)),
+                new SwerveModuleState(5, new Rotation2d(wheelPos[3].getAsDouble() + val))
         };
     }
 
     /**
-     * Change the pose of the odometery, but keeps the swerve's rotation 
+     * Change the pose of the odometery, but keeps the swerve's rotation
      * and wheel's encoder values
-     * @param pose the Pose2d to change the odometery 
+     * 
+     * @param pose the Pose2d to change the odometery
      */
     public void resetOdometry(Pose2d pose) {
         odometer.resetPosition(getRotation2d(), getSwerveModulePosistion(), pose);
@@ -330,12 +360,12 @@ public class SwerveSubsystem extends SubsystemBase{
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), getSwerveModulePosistion()); // Update Odom
-        
-        if(DebuggingConstants.SWERVE_DRIVE_DEBUG) {
-            // Updates general robot data like pos
+
+        if (DebuggingConstants.SWERVE_DRIVE_DEBUG) {
+            // // Updates general robot data like pos
             updateSmartDashboard();
-        
-            // Updates individual wheel values
+
+            // // Updates individual wheel values
             frontRight.updateSmartDashboard();
             frontLeft.updateSmartDashboard();
             backRight.updateSmartDashboard();
@@ -355,69 +385,63 @@ public class SwerveSubsystem extends SubsystemBase{
     }
 
     /**
-     * Upddates wheel positions to help advantage scope and other tools to visualize robot
+     * Upddates wheel positions to help advantage scope and other tools to visualize
+     * robot
      */
     public void updateWheelPositions() {
         SwerveModuleState[] moudleStates = getSwerveModuleState(); // Current states of wheels
-        
+
         // Physical / IRL values
         SmartDashboard.putNumberArray(
-            "RealState"
-            , new double[]{
-                moudleStates[0].angle.getRadians(),
-                moudleStates[0].speedMetersPerSecond,
-                moudleStates[1].angle.getRadians(),
-                moudleStates[1].speedMetersPerSecond,
-                moudleStates[2].angle.getRadians(),
-                moudleStates[2].speedMetersPerSecond,
-                moudleStates[3].angle.getRadians(),
-                moudleStates[3].speedMetersPerSecond,
-            }
-        );
+                "RealState", new double[] {
+                        moudleStates[0].angle.getRadians(),
+                        moudleStates[0].speedMetersPerSecond,
+                        moudleStates[1].angle.getRadians(),
+                        moudleStates[1].speedMetersPerSecond,
+                        moudleStates[2].angle.getRadians(),
+                        moudleStates[2].speedMetersPerSecond,
+                        moudleStates[3].angle.getRadians(),
+                        moudleStates[3].speedMetersPerSecond,
+                });
 
         // Controller / Desired values
         SmartDashboard.putNumberArray(
-            "DesiredState"
-            , new double[]{
-                desiredModuleStates[0].angle.getRadians(),
-                desiredModuleStates[0].speedMetersPerSecond,
-                desiredModuleStates[1].angle.getRadians(),
-                desiredModuleStates[1].speedMetersPerSecond,
-                desiredModuleStates[2].angle.getRadians(),
-                desiredModuleStates[2].speedMetersPerSecond,
-                desiredModuleStates[3].angle.getRadians(),
-                desiredModuleStates[3].speedMetersPerSecond,
-            }
-        );
+                "DesiredState", new double[] {
+                        desiredModuleStates[0].angle.getRadians(),
+                        desiredModuleStates[0].speedMetersPerSecond,
+                        desiredModuleStates[1].angle.getRadians(),
+                        desiredModuleStates[1].speedMetersPerSecond,
+                        desiredModuleStates[2].angle.getRadians(),
+                        desiredModuleStates[2].speedMetersPerSecond,
+                        desiredModuleStates[3].angle.getRadians(),
+                        desiredModuleStates[3].speedMetersPerSecond,
+                });
 
         // Phsyical / IRL Values but with Fake Speeds to help align and see deviation
         SmartDashboard.putNumberArray(
-            "RealStateFakeSpeed"
-            , new double[]{
-                moudleStates[0].angle.getRadians(),
-                5,
-                moudleStates[1].angle.getRadians(),
-                5,
-                moudleStates[2].angle.getRadians(),
-                5,
-                moudleStates[3].angle.getRadians(),
-                5,
-            }
-        );
+                "RealStateFakeSpeed", new double[] {
+                        moudleStates[0].angle.getRadians(),
+                        5,
+                        moudleStates[1].angle.getRadians(),
+                        5,
+                        moudleStates[2].angle.getRadians(),
+                        5,
+                        moudleStates[3].angle.getRadians(),
+                        5,
+                });
 
-        // Controller / Desired Values but with Fake Speeds to help align and see deviation
+        // Controller / Desired Values but with Fake Speeds to help align and see
+        // deviation
         SmartDashboard.putNumberArray(
-            "DesiredStateFakeSpeed"
-            , new double[]{
-                desiredModuleStates[0].angle.getRadians(),
-                4,
-                desiredModuleStates[1].angle.getRadians(),
-                4,
-                desiredModuleStates[2].angle.getRadians(),
-                4,
-                desiredModuleStates[3].angle.getRadians(),
-                4,
-            }
-        );
+                "DesiredStateFakeSpeed", new double[] {
+                        desiredModuleStates[0].angle.getRadians(),
+                        4,
+                        desiredModuleStates[1].angle.getRadians(),
+                        4,
+                        desiredModuleStates[2].angle.getRadians(),
+                        4,
+                        desiredModuleStates[3].angle.getRadians(),
+                        4,
+                });
     }
 }
