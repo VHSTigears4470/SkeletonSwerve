@@ -360,6 +360,7 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), getSwerveModulePosistion()); // Update Odom
+        updateWheelPositions();
 
         if (DebuggingConstants.SWERVE_DRIVE_DEBUG) {
             // // Updates general robot data like pos
@@ -394,39 +395,39 @@ public class SwerveSubsystem extends SubsystemBase {
         // Physical / IRL values
         SmartDashboard.putNumberArray(
                 "RealState", new double[] {
-                        moudleStates[0].angle.getRadians(),
+                        -moudleStates[0].angle.getRadians(),
                         moudleStates[0].speedMetersPerSecond,
-                        moudleStates[1].angle.getRadians(),
+                        -moudleStates[1].angle.getRadians(),
                         moudleStates[1].speedMetersPerSecond,
-                        moudleStates[2].angle.getRadians(),
+                        -moudleStates[2].angle.getRadians(),
                         moudleStates[2].speedMetersPerSecond,
-                        moudleStates[3].angle.getRadians(),
+                        -moudleStates[3].angle.getRadians(),
                         moudleStates[3].speedMetersPerSecond,
                 });
 
         // Controller / Desired values
         SmartDashboard.putNumberArray(
                 "DesiredState", new double[] {
-                        desiredModuleStates[0].angle.getRadians(),
+                        -desiredModuleStates[0].angle.getRadians(),
                         desiredModuleStates[0].speedMetersPerSecond,
-                        desiredModuleStates[1].angle.getRadians(),
+                        -desiredModuleStates[1].angle.getRadians(),
                         desiredModuleStates[1].speedMetersPerSecond,
-                        desiredModuleStates[2].angle.getRadians(),
+                        -desiredModuleStates[2].angle.getRadians(),
                         desiredModuleStates[2].speedMetersPerSecond,
-                        desiredModuleStates[3].angle.getRadians(),
+                        -desiredModuleStates[3].angle.getRadians(),
                         desiredModuleStates[3].speedMetersPerSecond,
                 });
 
         // Phsyical / IRL Values but with Fake Speeds to help align and see deviation
         SmartDashboard.putNumberArray(
                 "RealStateFakeSpeed", new double[] {
-                        moudleStates[0].angle.getRadians(),
+                        -moudleStates[0].angle.getRadians(),
                         5,
-                        moudleStates[1].angle.getRadians(),
+                        -moudleStates[1].angle.getRadians(),
                         5,
-                        moudleStates[2].angle.getRadians(),
+                        -moudleStates[2].angle.getRadians(),
                         5,
-                        moudleStates[3].angle.getRadians(),
+                        -moudleStates[3].angle.getRadians(),
                         5,
                 });
 
@@ -434,13 +435,13 @@ public class SwerveSubsystem extends SubsystemBase {
         // deviation
         SmartDashboard.putNumberArray(
                 "DesiredStateFakeSpeed", new double[] {
-                        desiredModuleStates[0].angle.getRadians(),
+                        -desiredModuleStates[0].angle.getRadians(),
                         4,
-                        desiredModuleStates[1].angle.getRadians(),
+                        -desiredModuleStates[1].angle.getRadians(),
                         4,
-                        desiredModuleStates[2].angle.getRadians(),
+                        -desiredModuleStates[2].angle.getRadians(),
                         4,
-                        desiredModuleStates[3].angle.getRadians(),
+                        -desiredModuleStates[3].angle.getRadians(),
                         4,
                 });
     }

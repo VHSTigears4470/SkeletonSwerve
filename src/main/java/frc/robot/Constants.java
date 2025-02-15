@@ -84,10 +84,10 @@ public final class Constants {
     public static final int FRONT_RIGHT_DRIVE_MOTOR_PORT = 6; // Check 6
     public static final int BACK_RIGHT_DRIVE_MOTOR_PORT = 8; // Check 8
 
-    public static final boolean BACK_LEFT_DRIVE_REVERSED = false; // Check / Modify
+    public static final boolean BACK_LEFT_DRIVE_REVERSED = true; // Check / Modify
     public static final boolean FRONT_LEFT_DRIVE_REVERSED = true; // Check / Modify
     public static final boolean FRONT_RIGHT_DRIVE_REVERSED = false; // Check / Modify
-    public static final boolean BACK_RIGHT_DRIVE_REVERSED = true; // Check / Modify
+    public static final boolean BACK_RIGHT_DRIVE_REVERSED = false; // Check / Modify
 
     // PID Values
     public static final boolean IS_USING_PID_DRIVE = false;
@@ -129,19 +129,19 @@ public final class Constants {
     public static final boolean FRONT_RIGHT_TURN_ABSOLUTE_ENCODER_REVERSED = true; // Check / Modify
     public static final boolean BACK_RIGHT_TURN_ABSOLUTE_ENCODER_REVERSED = true; // Check / Modify
 
-    public static final double BACK_LEFT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.340088; // 0.311279; //0.314453; //
+    public static final double BACK_LEFT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.000244; // 0.311279; //0.314453; //
                                                                                            // 0.314209; // Check /
                                                                                            // Modify //0.312500,
                                                                                            // 0.000244
-    public static final double FRONT_LEFT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.565674; // 0.101074;
+    public static final double FRONT_LEFT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.000244; // 0.101074;
                                                                                             // //0.095215;//0.584961;
                                                                                             // // Check / Modify
                                                                                             // //0.097656, 0.000000
-    public static final double FRONT_RIGHT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.839355; // 0.831055; //
+    public static final double FRONT_RIGHT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.000244; // 0.831055; //
                                                                                              // 0.824951;//0.329834; //
                                                                                              // Check / Modify
                                                                                              // //0.828369, 0.000000
-    public static final double BACK_RIGHT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.083984; // 0.090088; //
+    public static final double BACK_RIGHT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.000244; // 0.090088; //
                                                                                             // 0.076660;//0.604980; //
                                                                                             // Check / Modify
                                                                                             // //0.077637, -0.000244
