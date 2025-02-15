@@ -129,15 +129,15 @@ public final class Constants {
     public static final boolean FRONT_RIGHT_TURN_ABSOLUTE_ENCODER_REVERSED = true; // Check / Modify
     public static final boolean BACK_RIGHT_TURN_ABSOLUTE_ENCODER_REVERSED = true; // Check / Modify
 
-    public static final double BACK_LEFT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.000244; // 0.311279; //0.314453; //
+    public static final double BACK_LEFT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.000000; // 0.311279; //0.314453; //
                                                                                            // 0.314209; // Check /
                                                                                            // Modify //0.312500,
                                                                                            // 0.000244
-    public static final double FRONT_LEFT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.000244; // 0.101074;
+    public static final double FRONT_LEFT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.000000; // 0.101074;
                                                                                             // //0.095215;//0.584961;
                                                                                             // // Check / Modify
                                                                                             // //0.097656, 0.000000
-    public static final double FRONT_RIGHT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.000244; // 0.831055; //
+    public static final double FRONT_RIGHT_TURN_ABSOLUTE_ENCODER_OFFSET_ROTATION = 0.000000; // 0.831055; //
                                                                                              // 0.824951;//0.329834; //
                                                                                              // Check / Modify
                                                                                              // //0.828369, 0.000000
